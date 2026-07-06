@@ -166,6 +166,19 @@ import { ScrollAnimationService } from '../../services/scroll-animation.service'
       .hero-bottom { justify-content: center; flex-direction: column; gap: 2rem; }
       .scroll-hint { display: none; }
     }
+    @media (max-width: 768px) {
+      .hero { padding: 5.5rem 1.25rem 2rem; }
+    }
+    @media (max-width: 480px) {
+      .hero {
+        min-height: 100svh;
+        padding: 5rem 1rem 1.5rem;
+      }
+      .hero-name { font-size: clamp(1.75rem, 9vw, 2.4rem); }
+      .hero-role { font-size: clamp(0.95rem, 4.5vw, 1.25rem); max-width: 100%; }
+      .hero-pretitle { font-size: 0.85rem; }
+      .hero-bottom { margin-top: 1rem; gap: 1.5rem; }
+    }
   `,
 })
 export class Hero implements AfterViewInit {

@@ -65,6 +65,13 @@ import { ScrollAnimationService } from '../../services/scroll-animation.service'
       background: rgba(99, 102, 241, 0.2);
       color: var(--text-primary);
     }
+    @media (max-width: 768px) {
+      .skills-grid { grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); }
+    }
+    @media (max-width: 480px) {
+      .skills-grid { grid-template-columns: 1fr; }
+      .skill-card { padding: 1.25rem; }
+    }
   `,
 })
 export class Skills implements AfterViewInit {

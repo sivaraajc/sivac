@@ -228,6 +228,32 @@ import { ResumeService } from '../../services/resume.service';
     li { margin-bottom: 0.35rem; }
     .skill-rows p { margin-bottom: 0.4rem; color: var(--text-secondary); }
     .skill-rows strong { color: var(--text-primary); }
+    @media (max-width: 768px) {
+      .overlay {
+        padding: 0;
+        align-items: stretch;
+      }
+      .modal {
+        width: 100%;
+        max-height: 100vh;
+        max-height: 100dvh;
+        border-radius: 0;
+        border: none;
+      }
+      .modal-header {
+        padding: 1rem;
+        padding-top: calc(1rem + env(safe-area-inset-top, 0px));
+      }
+      .modal-body { padding: 1rem; }
+      .pdf-frame { height: calc(100dvh - 130px); }
+      .resume-header h1 { font-size: 1.4rem; }
+      .resume-meta { font-size: 0.75rem; word-break: break-word; }
+    }
+    @media (max-width: 480px) {
+      .modal-actions { width: 100%; justify-content: flex-start; }
+      .tab, .download { flex: 1; text-align: center; min-height: 40px; }
+      .resume-doc { font-size: 0.85rem; }
+    }
   `,
 })
 export class ResumeModal {

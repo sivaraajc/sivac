@@ -77,7 +77,13 @@ import { ScrollAnimationService } from '../../services/scroll-animation.service'
       margin-top: 0.25rem;
     }
     @media (max-width: 768px) {
-      .about-grid { grid-template-columns: 1fr; }
+      .about-grid { grid-template-columns: 1fr; gap: 2rem; }
+      .about-para { font-size: 1rem; }
+    }
+    @media (max-width: 480px) {
+      .about-stats { grid-template-columns: 1fr; }
+      .stat-card { padding: 1.15rem; }
+      .stat-number { font-size: 1.65rem; }
     }
   `,
 })

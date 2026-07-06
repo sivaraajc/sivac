@@ -126,6 +126,18 @@ import { ScrollAnimationService } from '../../services/scroll-animation.service'
       color: var(--accent-indigo);
       font-weight: bold;
     }
+    @media (max-width: 768px) {
+      .exp-tab { padding: 0.55rem 1.1rem; font-size: 0.82rem; }
+      .exp-card { padding: 1.35rem; border-radius: 16px; }
+      .exp-header { flex-direction: column; align-items: flex-start; }
+      .exp-date { align-self: flex-start; }
+      .exp-title { font-size: 1.15rem; }
+    }
+    @media (max-width: 480px) {
+      .exp-tabs { gap: 0.4rem; }
+      .exp-tab { padding: 0.5rem 0.9rem; font-size: 0.75rem; }
+      .exp-item { font-size: 0.9rem; }
+    }
   `,
 })
 export class Experience implements AfterViewInit {

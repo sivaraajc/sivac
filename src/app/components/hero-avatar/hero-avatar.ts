@@ -281,7 +281,58 @@ type CenterMode = 'video' | 'photo' | 'portrait3d' | 'human3d' | 'initials';
     @keyframes spin { to { transform: rotate(360deg); } }
 
     @media (max-width: 1024px) {
-      .skill-orb { transform: rotate(var(--angle)) translateY(-150px) rotate(calc(-1 * var(--angle))); }
+      .orbit-wrap {
+        width: min(380px, 88vw);
+        height: min(420px, 58vh);
+      }
+      .orbit-stage { min-height: 360px; }
+      .skill-orb {
+        width: 46px;
+        height: 46px;
+        margin: -23px;
+        transform: rotate(var(--angle)) translateY(-140px) rotate(calc(-1 * var(--angle)));
+      }
+      .center-stage { width: 190px; height: 190px; }
+      .hero-initials span { font-size: 3.75rem; }
+    }
+    @media (max-width: 768px) {
+      .orbit-wrap {
+        width: min(340px, 90vw);
+        height: min(380px, 52vh);
+      }
+      .orbit-stage { min-height: 320px; }
+      .skill-orb {
+        width: 42px;
+        height: 42px;
+        margin: -21px;
+        transform: rotate(var(--angle)) translateY(-125px) rotate(calc(-1 * var(--angle)));
+      }
+      .skill-orb span { font-size: 0.58rem; }
+      .center-stage { width: 170px; height: 170px; }
+      .hero-initials span { font-size: 3.25rem; }
+    }
+    @media (max-width: 480px) {
+      .orbit-wrap {
+        width: min(290px, 92vw);
+        height: min(330px, 48vh);
+      }
+      .orbit-stage { min-height: 280px; }
+      .skill-orb {
+        width: 36px;
+        height: 36px;
+        margin: -18px;
+        transform: rotate(var(--angle)) translateY(-105px) rotate(calc(-1 * var(--angle)));
+      }
+      .skill-orb span { font-size: 0.5rem; }
+      .center-stage { width: 148px; height: 148px; }
+      .hero-initials span { font-size: 2.75rem; }
+    }
+    @media (max-width: 360px) {
+      .orbit-wrap { width: 260px; }
+      .skill-orb {
+        transform: rotate(var(--angle)) translateY(-92px) rotate(calc(-1 * var(--angle)));
+      }
+      .center-stage { width: 132px; height: 132px; }
     }
   `,
 })

@@ -110,6 +110,14 @@ import { ScrollAnimationService } from '../../services/scroll-animation.service'
     .cert-item:hover {
       border-color: rgba(34, 211, 238, 0.3);
     }
+    @media (max-width: 768px) {
+      .edu-card { flex-direction: column; padding: 1.35rem; }
+      .edu-degree { font-size: 1.05rem; }
+    }
+    @media (max-width: 480px) {
+      .edu-card { padding: 1.15rem; border-radius: 16px; }
+      .cert-item { padding: 0.75rem 1rem; font-size: 0.85rem; }
+    }
   `,
 })
 export class Education implements AfterViewInit {

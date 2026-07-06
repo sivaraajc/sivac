@@ -87,7 +87,7 @@ import { ScrollAnimationService } from '../../services/scroll-animation.service'
     }
     .projects-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
       gap: 2rem;
     }
     .project-card {
@@ -204,8 +204,15 @@ import { ScrollAnimationService } from '../../services/scroll-animation.service'
       transition: gap 0.3s;
     }
     .project-link:hover { gap: 0.7rem; }
-    @media (max-width: 400px) {
-      .projects-grid { grid-template-columns: 1fr; }
+    @media (max-width: 768px) {
+      .project-visual { height: 200px; }
+      .project-body { padding: 1.25rem; }
+    }
+    @media (max-width: 480px) {
+      .projects-grid { grid-template-columns: 1fr; gap: 1.5rem; }
+      .project-visual { height: 180px; }
+      .project-title { font-size: 1.05rem; }
+      .project-desc { font-size: 0.85rem; }
     }
   `,
 })

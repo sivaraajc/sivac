@@ -129,6 +129,15 @@ const TECH_STACK = ['Angular', 'TypeScript', 'Spring Boot', 'FastAPI', 'Docker',
       border: 1px solid rgba(34, 211, 238, 0.22);
       backdrop-filter: blur(8px);
     }
+    @media (max-width: 768px) {
+      :host, .dev-scene-panel { min-height: 380px; }
+      .panel-footer { bottom: 0.85rem; left: 0.75rem; right: 0.75rem; }
+    }
+    @media (max-width: 480px) {
+      :host, .dev-scene-panel { min-height: 300px; border-radius: 16px; }
+      .panel-header { top: 0.75rem; left: 0.85rem; font-size: 0.65rem; }
+      .tech-chip { font-size: 0.58rem; padding: 0.25rem 0.55rem; }
+    }
   `,
 })
 export class ResumeDevScene implements AfterViewInit, OnDestroy {

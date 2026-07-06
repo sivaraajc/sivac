@@ -152,6 +152,13 @@ import { ResumeDevScene } from '../resume-dev-scene/resume-dev-scene';
       .resume-layout { grid-template-columns: 1fr; }
       .scene-panel { min-height: 400px; }
     }
+    @media (max-width: 480px) {
+      .resume-card { padding: 1.5rem; border-radius: 16px; }
+      .resume-card-header .section-title { font-size: 1.5rem; }
+      .resume-btns { flex-direction: column; }
+      .btn-primary, .btn-ghost { width: 100%; text-align: center; }
+      .scene-panel { min-height: 320px; border-radius: 16px; }
+    }
   `,
 })
 export class ResumeSection implements AfterViewInit {

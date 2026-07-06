@@ -159,10 +159,25 @@ import { ScrollAnimationService } from '../../services/scroll-animation.service'
     .footer {
       text-align: center;
       padding: 3rem 2rem;
+      padding-bottom: calc(3rem + env(safe-area-inset-bottom, 0px));
       color: var(--text-muted);
       font-size: 0.85rem;
       border-top: 1px solid var(--glass-border);
       margin-top: 2rem;
+    }
+    @media (max-width: 768px) {
+      .contact-content { font-size: 1rem; padding: 0 0.5rem; }
+      .chat-card { padding: 2.5rem 1.5rem; border-radius: 20px; }
+    }
+    @media (max-width: 480px) {
+      .contact-actions { flex-direction: column; width: 100%; max-width: 320px; margin-left: auto; margin-right: auto; }
+      .btn-primary, .btn-ghost { width: 100%; justify-content: center; }
+      .contact-links { flex-direction: column; gap: 0.5rem; }
+      .divider { display: none; }
+      .contact-links a { font-size: 0.85rem; min-height: 44px; display: flex; align-items: center; justify-content: center; }
+      .chat-card { padding: 2rem 1.15rem; }
+      .chat-title { font-size: 1.25rem; }
+      .footer { padding: 2rem 1rem; font-size: 0.8rem; }
     }
   `,
 })

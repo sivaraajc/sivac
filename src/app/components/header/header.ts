@@ -1,10 +1,15 @@
-import { Component, HostListener, inject, signal } from '@angular/core';
+import { Component, HostListener, inject, signal, PLATFORM_ID, OnDestroy } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { PORTFOLIO } from '../../data/portfolio.data';
 import { ResumeService } from '../../services/resume.service';
 
 @Component({
   selector: 'app-header',
   template: `
+    @if (menuOpen()) {
+      <div class="nav-backdrop" (click)="closeMenu()" aria-hidden="true"></div>
+    }
+
     <header class="header" [class.scrolled]="scrolled()">
       <a class="logo" href="#home" (click)="scrollTo('home', $event)">
         <img class="logo-avatar" [src]="data.avatarImage" [alt]="data.name" />
@@ -40,12 +45,18 @@ import { ResumeService } from '../../services/resume.service';
       align-items: center;
       justify-content: space-between;
       padding: 2rem 3rem;
+      padding-top: calc(2rem + env(safe-area-inset-top, 0px));
+      padding-left: calc(3rem + env(safe-area-inset-left, 0px));
+      padding-right: calc(3rem + env(safe-area-inset-right, 0px));
       transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
     }
     .header.scrolled {
       background: rgba(8, 8, 12, 0.88);
       backdrop-filter: blur(24px);
       padding: 1rem 3rem;
+      padding-top: calc(1rem + env(safe-area-inset-top, 0px));
+      padding-left: calc(3rem + env(safe-area-inset-left, 0px));
+      padding-right: calc(3rem + env(safe-area-inset-right, 0px));
       border-bottom: 1px solid rgba(255, 255, 255, 0.04);
     }
     .logo {
@@ -124,33 +135,67 @@ import { ResumeService } from '../../services/resume.service';
       background: var(--text-primary);
       transition: 0.3s;
     }
+    .nav-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 99;
+      background: rgba(0, 0, 0, 0.55);
+      backdrop-filter: blur(4px);
+    }
     @media (max-width: 768px) {
-      .header { padding: 1.25rem 1.5rem; }
-      .menu-toggle { display: flex; }
+      .header {
+        padding: 1.25rem 1.5rem;
+        padding-top: calc(1.25rem + env(safe-area-inset-top, 0px));
+        padding-left: calc(1.5rem + env(safe-area-inset-left, 0px));
+        padding-right: calc(1.5rem + env(safe-area-inset-right, 0px));
+      }
+      .header.scrolled {
+        padding: 0.85rem 1.5rem;
+        padding-top: calc(0.85rem + env(safe-area-inset-top, 0px));
+        padding-left: calc(1.5rem + env(safe-area-inset-left, 0px));
+        padding-right: calc(1.5rem + env(safe-area-inset-right, 0px));
+      }
+      .menu-toggle { display: flex; min-width: 44px; min-height: 44px; align-items: center; justify-content: center; }
       .nav {
         position: fixed;
         top: 0;
         right: -100%;
-        width: 75%;
-        max-width: 280px;
+        width: min(85vw, 300px);
         height: 100vh;
+        height: 100dvh;
         background: rgba(8, 8, 12, 0.97);
         backdrop-filter: blur(24px);
         flex-direction: column;
-        padding: 5rem 2rem;
-        gap: 2rem;
+        padding: calc(5rem + env(safe-area-inset-top, 0px)) 2rem 2rem;
+        padding-right: calc(2rem + env(safe-area-inset-right, 0px));
+        gap: 0.25rem;
         transition: right 0.4s ease;
         border-left: 1px solid rgba(255,255,255,0.06);
+        z-index: 101;
       }
       .nav.open { right: 0; }
+      .nav-link {
+        font-size: 0.85rem;
+        padding: 0.85rem 0;
+        min-height: 44px;
+        display: flex;
+        align-items: center;
+      }
+      .cv-btn { min-height: 44px; display: flex; align-items: center; }
+    }
+    @media (max-width: 480px) {
+      .logo-avatar { width: 34px; height: 34px; }
+      .logo-text { font-size: 1.25rem; }
+      .header-actions { gap: 0.5rem; }
     }
   `,
 })
-export class Header {
+export class Header implements OnDestroy {
   readonly data = PORTFOLIO;
   readonly scrolled = signal(false);
   readonly menuOpen = signal(false);
   private readonly resume = inject(ResumeService);
+  private readonly platformId = inject(PLATFORM_ID);
 
   readonly navItems = [
     { id: 'about', label: 'About' },
@@ -166,7 +211,7 @@ export class Header {
 
   onNavClick(id: string, event: Event): void {
     event.preventDefault();
-    this.menuOpen.set(false);
+    this.closeMenu();
     if (id === 'resume') {
       this.resume.open();
       return;
@@ -185,5 +230,21 @@ export class Header {
 
   toggleMenu(): void {
     this.menuOpen.update((v) => !v);
+    this.syncBodyScroll();
+  }
+
+  closeMenu(): void {
+    this.menuOpen.set(false);
+    this.syncBodyScroll();
+  }
+
+  ngOnDestroy(): void {
+    this.menuOpen.set(false);
+    this.syncBodyScroll();
+  }
+
+  private syncBodyScroll(): void {
+    if (!isPlatformBrowser(this.platformId)) return;
+    document.body.style.overflow = this.menuOpen() ? 'hidden' : '';
   }
 }
