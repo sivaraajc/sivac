@@ -1,0 +1,130 @@
+{
+  "Header.Item1": "About Me",
+  "Header.Item2": "Experience",
+  "Header.Item3": "Projects",
+  "Header.Item4": "Contact",
+  "Header.Item5": "Chat",
+  "Header.cvBtn": "Resume",
+  "Header.cvName": "SIVA_CV.pdf",
+  "Banner.Pretitle": "Hello! I am",
+  "Banner.Description": "I have <span class='underline'>3+ years of professional experience</span> developing dynamic, responsive, and user-friendly web applications. I specialize in building efficient systems, intuitive user interfaces, and scalable solutions that enhance user experience. I am passionate about writing clean, reusable, and maintainable code in <span class='underline'>Angular</span>, following modern development standards and best practices. As a Full Stack Developer, I have experience working with Angular, Java Spring Boot, and MySQL, and I am currently developing applications using Angular, Python, and MongoDB to deliver robust and high-performing web solutions.",
+  "Banner.ActionBtn": "Say Hi",
+  "AboutMe.Title": "About Me",
+ "AboutMe.Paragraphs": [
+    "With <span class='underline'>over 3 years of experience</span>, I have worked across both <span class='underline'>frontend</span> and <span class='underline'>backend development</span>, with a strong focus on Angular-based applications. I enjoy transforming complex requirements into intuitive and reliable solutions that solve real-world problems.",
+    "My expertise includes implementing system enhancements, optimizing Angular applications for performance and scalability, standardizing UI/UX patterns, and proposing and executing ideas that deliver measurable value to the products I contribute to.",
+    "I actively work on personal and utility-based projects to explore new technologies, improve development workflows, and continuously strengthen my technical skill set.",  
+    "Technologies I regularly work with include Angular, TypeScript, JavaScript, Java Spring Boot, Python, MySQL, MongoDB, RESTful APIs, HTML, CSS, and Git.",
+    "I also have solid experience in backend development using Java Spring Boot to design secure, scalable, and high-performance REST APIs, enabling seamless communication between frontend applications and backend services."
+  ]
+,
+  "Experience.Title": "Experience",
+  "Experience.Jobs": [
+      {
+    "Tab": "I-Bytes",
+    "Company": "I-Bytes Bits and Bots Pvt Ltd – Oil and Gas Software Solutions",
+    "Title": "Software Developer",
+    "Date": "Apr 2025 - Present",
+  "Description": [
+  "Leading Angular frontend architecture by defining scalable coding standards and best practices across the application.",
+  "Designing and developing highly reusable, configurable, and modular Angular components to reduce code duplication and improve maintainability.",
+  "Establishing a clean and consistent project folder structure aligned with Angular style guidelines for better scalability and team collaboration.",
+  "Enforcing code quality through ESLint, Prettier, and Angular linting rules to maintain consistent formatting and prevent common bugs.",
+  "Refactoring legacy code to improve performance, readability, and long-term maintainability.",
+  "Implementing RxJS best practices for efficient state management and optimized API handling.",
+  "Collaborating closely with stakeholders, product owners, and backend teams to translate business requirements into technical solutions.",
+  "Building and integrating scalable REST APIs using Python FastAPI to support frontend functionality.",
+  "Handling secure frontend-to-backend communication by implementing proper authentication, authorization, and API error handling.",
+  "Improving backend reliability and performance through API optimization, logging, monitoring, and efficient database interactions."
+]
+
+  } ,
+    {
+      "Tab": "Oasys",
+      "Company": "Oasys Cybernetics Pvt Ltd.",
+      "Title": "Software Developer",
+      "Date": "Aug 2023 - Apr 2025",
+      "Description": [
+        "Driving technical decisions to ensure efficient frontend development using Angular.",
+        "Contributing to the hiring process for frontend development talent.",
+        "Leading and mentoring a team focused on Angular-based projects.",
+        "Developing and maintaining a responsive and scalable web application for seamless user experience.",
+        "Creating reusable components and custom directives to enhance Angular applications.",
+        "Implementing continuous integration pipelines and ensuring application stability through automated tests and regular updates.",
+        "Collaborating with stakeholders to plan and report on project progress and deliverables.",
+        "Designing and developing secure, scalable, and high-performance REST APIs using Java Spring Boot to enable seamless interaction between the client and server.",
+        "Integrating business logic into the back end by creating robust service layers and implementing database operations with MySQL/PostgreSQL.",
+        "Optimizing server-side performance and ensuring high availability by managing API requests and load balancing.",
+        "Implementing role-based access control and authentication mechanisms to secure back-end systems.",
+        "Debugging, monitoring, and improving back-end systems to ensure reliable application performance."
+      ]
+    }
+  
+  ],
+  "FeatureProjects.Title": "My Projects",
+  "FeatureProjects.Label": "",
+  "FeatureProjects.Projects": [
+    {
+      "Title": "CO-OPTEX",
+      "Description": "Developing a web application to efficiently suggest and manage the <span class='underline'>COOPTEX</span> Retail Application, a comprehensive Enterprise Resource Planning (ERP) system. The application oversees the flow of supplies through all stages of the production cycle. This includes implementing robust back-end functionality using Java Spring Boot for managing business logic, ensuring seamless data flow, and creating secure REST APIs for integration across modules. Additionally, optimizing the front-end with Angular to deliver a responsive and user-friendly interface for streamlined operations.",
+      "imgs": [
+        "assets/images/coptex1.png",
+        "assets/images/coptex2.png",
+        "assets/images/coptex3.png",
+        "assets/images/coptex4.png",
+        "assets/images/coptex5.png"
+      ],
+      "Technologies": [
+        "Angular 16",
+        "TypeScript 5.2",
+        "Angular Material",
+        "Bootstrap",
+        "RxJS",
+        "Java",
+        "Postgresql"
+      ]
+    },
+    {
+      "Title": "THE STELLA",
+      "Description": "The <span class='underline'>Stella E-Commerce System</span> is a comprehensive and dynamic web-based application designed to revolutionize the online shopping experience. Built using Angular for the front end, it provides an interactive and user-friendly interface, ensuring seamless navigation and product discovery for customers. The back end, developed with Java Spring Boot, powers the system with secure REST APIs for efficient order management, payment processing, and inventory tracking. Designed as a freelance project, this solution enables businesses to showcase and sell their products online while optimizing backend processes like product catalog management, user authentication, and sales analytics.",
+      "imgs": [
+        "assets/images/stella1.png",
+        "assets/images/stella3.png",
+        "assets/images/stella4.png",
+        "assets/images/stella5.png",
+        "assets/images/stella2.png"
+      ],
+      "Technologies": [
+        "Angular 18",
+        "Angular Material",
+        "Bootstrap",
+        "TypeScript 5.5",
+        "RxJS",
+        "SpringBoot",
+        "Core Java"
+      ]
+    },
+    {
+      "Title": "Static Ecommerce",
+      "Description": "The <span class='underline'>Stella E-Commerce System</span> is a comprehensive and dynamic web-based application designed to revolutionize the online shopping experience. Built using Angular for the front end.",
+      "imgs": [
+        "assets/images/static1.png",
+        "assets/images/static2.png",
+        "assets/images/static3.png",
+        "assets/images/static4.png",
+        "assets/images/static5.png"
+      ],
+      "Technologies": [
+        "Angular 18",
+        "Angular Material",
+        "Bootstrap",
+        "TypeScript 5.5",
+        "RxJS"
+      ]
+    }
+  ],
+  "Contact.Pretitle": "And... Now?",
+  "Contact.Title": "Say Hi!",
+  "Contact.Content": "I will be glad to hear from you if you want to discuss new opportunities. Write to me, and I will respond as soon as I see your message.",
+  "Contact.Btn": "Contact Me"
+}
