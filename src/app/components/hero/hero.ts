@@ -1,197 +1,159 @@
-import { Component, inject, AfterViewInit } from '@angular/core';
-import { HeroAvatar } from '../hero-avatar/hero-avatar';
-import { PORTFOLIO } from '../../data/portfolio.data';
-import { ScrollAnimationService } from '../../services/scroll-animation.service';
+import {
+  AfterViewInit,
+  ChangeDetectionStrategy,
+  Component,
+  ElementRef,
+  OnDestroy,
+  inject,
+  signal,
+  viewChild,
+} from '@angular/core';
+import { PortfolioService } from '../../services/portfolio.service';
+import { AnimationService } from '../../services/animation.service';
+import { LenisService } from '../../services/lenis.service';
+import { MagneticDirective } from '../../directives/magnetic.directive';
+import { LucideArrowDown, LucideSparkles } from '@lucide/angular';
 
 @Component({
   selector: 'app-hero',
-  imports: [HeroAvatar],
+  standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [MagneticDirective, LucideArrowDown, LucideSparkles],
   template: `
-    <section id="home" class="hero">
-      <div class="hero-stage">
-        <div class="hero-left">
-          <p class="hero-pretitle hero-pretitle-left">{{ data.banner.pretitle }}</p>
-          <h1 class="hero-name">{{ data.name }}</h1>
+    <section id="home" class="relative z-10 flex min-h-[100svh] items-center pt-28 pb-16">
+      <div class="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(45,212,191,0.08),transparent_55%)]"></div>
+      <div class="container-premium relative grid items-center gap-12 lg:grid-cols-[1.15fr_0.85fr]">
+        <div>
+          <p data-hero="eyebrow" class="mb-4 inline-flex items-center gap-2 rounded-full border border-border bg-surface px-3 py-1.5 text-xs font-medium uppercase tracking-[0.22em] text-accent">
+            <svg lucideSparkles [size]="14"></svg>
+            Available for opportunities
+          </p>
+          <h1 data-hero="title" class="font-display text-[clamp(2.8rem,8vw,5.6rem)] font-semibold leading-[0.95] tracking-tight">
+            <span class="block text-text-muted">Hello, I'm</span>
+            <span class="text-gradient">{{ p().fullName }}</span>
+          </h1>
+          <p data-hero="subtitle" class="mt-5 max-w-xl text-lg text-text-muted md:text-xl">
+            <span class="text-text">{{ p().title }}</span>
+            — {{ typed() }}<span class="caret" aria-hidden="true"></span>
+          </p>
+          <p data-hero="subtitle" class="mt-4 max-w-xl text-base text-text-dim">{{ p().tagline }}</p>
+
+          <div data-hero="cta" class="mt-8 flex flex-wrap gap-3">
+            <a class="magnetic-btn btn-primary" href="#projects" appMagnetic (click)="go($event, '#projects')">View Projects</a>
+            <a class="magnetic-btn btn-ghost" href="#contact" appMagnetic (click)="go($event, '#contact')">Let's Talk</a>
+          </div>
         </div>
 
-        <div class="hero-center">
-          <app-hero-avatar />
-        </div>
-
-        <div class="hero-right">
-          <p class="hero-pretitle hero-pretitle-right">Full Stack Developer &</p>
-          <h2 class="hero-role">{{ roleLine }}</h2>
+        <div data-hero="visual" class="relative mx-auto w-full max-w-md">
+          <div class="absolute -inset-6 rounded-[32px] bg-gradient-to-br from-accent/25 via-transparent to-accent-2/20 blur-2xl"></div>
+          <div class="card-premium relative overflow-hidden p-3" appMagnetic [strength]="0.08">
+            <div class="relative aspect-square overflow-hidden rounded-[16px]">
+              <img
+                [src]="p().heroAvatarImage"
+                [alt]="p().fullName"
+                class="h-full w-full object-cover"
+                width="640"
+                height="640"
+                fetchpriority="high"
+              />
+              <div class="absolute inset-0 bg-gradient-to-t from-bg via-transparent to-transparent opacity-70"></div>
+            </div>
+            <div class="absolute bottom-6 left-6 right-6 rounded-2xl border border-border glass-strong p-4">
+              <p class="text-xs uppercase tracking-[0.2em] text-text-dim">Based in</p>
+              <p class="font-display text-lg font-medium">{{ p().location }}</p>
+            </div>
+          </div>
         </div>
       </div>
 
-      <div class="hero-bottom">
-        <a class="hero-cta" href="#contact" (click)="scrollToContact($event)">
-          {{ data.banner.actionBtn }}
-        </a>
-        <div class="scroll-hint">
-          <span>Scroll</span>
-          <div class="scroll-line"></div>
-        </div>
-      </div>
+      <button
+        data-hero="scroll"
+        type="button"
+        class="absolute bottom-8 left-1/2 flex -translate-x-1/2 flex-col items-center gap-2 text-xs uppercase tracking-[0.28em] text-text-dim"
+        (click)="go($event, '#about')"
+      >
+        Scroll
+        <span class="flex h-10 w-6 items-start justify-center rounded-full border border-border p-1">
+          <span class="scroll-dot h-1.5 w-1.5 rounded-full bg-accent"></span>
+        </span>
+        <svg lucideArrowDown [size]="14" class="opacity-60"></svg>
+      </button>
     </section>
   `,
   styles: `
-    .hero {
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      position: relative;
-      padding: 6rem 3rem 3rem;
-      overflow: hidden;
+    .caret {
+      display: inline-block;
+      width: 2px;
+      height: 1.1em;
+      margin-left: 2px;
+      vertical-align: -0.1em;
+      background: #2dd4bf;
+      animation: blink 1s step-end infinite;
     }
-    .hero-stage {
-      display: grid;
-      grid-template-columns: 1fr minmax(300px, 480px) 1fr;
-      align-items: center;
-      gap: 1rem;
-      flex: 1;
-      max-width: 1400px;
-      margin: 0 auto;
-      width: 100%;
+    .scroll-dot {
+      animation: scrollPulse 1.6s ease-in-out infinite;
     }
-    .hero-left {
-      text-align: left;
-      padding-right: 1rem;
+    @keyframes blink {
+      50% { opacity: 0; }
     }
-    .hero-right {
-      text-align: right;
-      padding-left: 1rem;
-    }
-    .hero-pretitle {
-      font-size: clamp(0.9rem, 1.5vw, 1.1rem);
-      color: var(--text-secondary);
-      font-weight: 400;
-      letter-spacing: 0.02em;
-      margin-bottom: 0.75rem;
-    }
-    .hero-name {
-      font-family: var(--font-display);
-      font-size: clamp(2.4rem, 5.5vw, 4.2rem);
-      font-weight: 800;
-      line-height: 0.95;
-      color: var(--text-primary);
-      text-transform: uppercase;
-      letter-spacing: 0.06em;
-      margin: 0;
-    }
-    .hero-role {
-      font-family: var(--font-display);
-      font-size: clamp(1.3rem, 2.8vw, 2.2rem);
-      font-weight: 800;
-      line-height: 1.2;
-      color: var(--text-primary);
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      margin: 0;
-      max-width: 340px;
-      margin-left: auto;
-    }
-    .hero-center {
-      position: relative;
-      z-index: 2;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    .hero-bottom {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      max-width: 1400px;
-      margin: 2rem auto 0;
-      width: 100%;
-      padding: 0 1rem;
-    }
-    .hero-cta {
-      font-size: 0.8rem;
-      font-weight: 600;
-      letter-spacing: 0.15em;
-      text-transform: uppercase;
-      color: var(--accent-cyan);
-      text-decoration: none;
-      border-bottom: 1px solid var(--accent-cyan);
-      padding-bottom: 4px;
-      transition: opacity 0.3s;
-    }
-    .hero-cta:hover { opacity: 0.75; }
-    .scroll-hint {
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-      color: var(--text-muted);
-      font-size: 0.7rem;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-    }
-    .scroll-line {
-      width: 60px;
-      height: 1px;
-      background: linear-gradient(90deg, var(--text-muted), transparent);
-      position: relative;
-      overflow: hidden;
-    }
-    .scroll-line::after {
-      content: '';
-      position: absolute;
-      left: -100%;
-      top: 0;
-      width: 100%;
-      height: 100%;
-      background: var(--accent-cyan);
-      animation: scroll-slide 2s infinite;
-    }
-    @keyframes scroll-slide {
-      0% { left: -100%; }
-      100% { left: 100%; }
-    }
-    @media (max-width: 1024px) {
-      .hero-stage {
-        grid-template-columns: 1fr;
-        grid-template-rows: auto auto auto;
-        text-align: center;
-        gap: 0.5rem;
-      }
-      .hero-left, .hero-right {
-        text-align: center;
-        padding: 0;
-      }
-      .hero-role { margin: 0 auto; }
-      .hero-center { order: -1; }
-      .hero-bottom { justify-content: center; flex-direction: column; gap: 2rem; }
-      .scroll-hint { display: none; }
-    }
-    @media (max-width: 768px) {
-      .hero { padding: 5.5rem 1.25rem 2rem; }
-    }
-    @media (max-width: 480px) {
-      .hero {
-        min-height: 100svh;
-        padding: 5rem 1rem 1.5rem;
-      }
-      .hero-name { font-size: clamp(1.75rem, 9vw, 2.4rem); }
-      .hero-role { font-size: clamp(0.95rem, 4.5vw, 1.25rem); max-width: 100%; }
-      .hero-pretitle { font-size: 0.85rem; }
-      .hero-bottom { margin-top: 1rem; gap: 1.5rem; }
+    @keyframes scrollPulse {
+      0% { transform: translateY(0); opacity: 1; }
+      100% { transform: translateY(14px); opacity: 0; }
     }
   `,
 })
-export class Hero implements AfterViewInit {
-  readonly data = PORTFOLIO;
-  readonly roleLine = PORTFOLIO.title.toUpperCase();
-  private readonly scrollAnim = inject(ScrollAnimationService);
+export class Hero implements AfterViewInit, OnDestroy {
+  private readonly host = inject(ElementRef<HTMLElement>);
+  private readonly portfolio = inject(PortfolioService);
+  private readonly animation = inject(AnimationService);
+  private readonly lenis = inject(LenisService);
+
+  readonly p = () => this.portfolio.portfolio();
+  readonly typed = signal('');
+  private roleIndex = 0;
+  private charIndex = 0;
+  private deleting = false;
+  private timer?: ReturnType<typeof setTimeout>;
 
   ngAfterViewInit(): void {
-    setTimeout(() => this.scrollAnim.heroEntrance(), 200);
+    this.animation.heroTimeline(this.host.nativeElement);
+    this.typeLoop();
   }
 
-  scrollToContact(event: Event): void {
+  ngOnDestroy(): void {
+    if (this.timer) clearTimeout(this.timer);
+  }
+
+  go(event: Event, href: string): void {
     event.preventDefault();
-    document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' });
+    this.lenis.scrollTo(href);
+  }
+
+  private typeLoop(): void {
+    const roles = this.p().roles;
+    const current = roles[this.roleIndex] ?? '';
+
+    if (!this.deleting && this.charIndex <= current.length) {
+      this.typed.set(current.slice(0, this.charIndex));
+      this.charIndex++;
+      this.timer = setTimeout(() => this.typeLoop(), 70);
+      if (this.charIndex > current.length) {
+        this.deleting = true;
+        this.timer = setTimeout(() => this.typeLoop(), 1400);
+      }
+      return;
+    }
+
+    if (this.deleting && this.charIndex >= 0) {
+      this.typed.set(current.slice(0, this.charIndex));
+      this.charIndex--;
+      this.timer = setTimeout(() => this.typeLoop(), 36);
+      if (this.charIndex < 0) {
+        this.deleting = false;
+        this.roleIndex = (this.roleIndex + 1) % roles.length;
+        this.charIndex = 0;
+        this.timer = setTimeout(() => this.typeLoop(), 300);
+      }
+    }
   }
 }

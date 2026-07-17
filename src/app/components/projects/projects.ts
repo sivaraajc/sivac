@@ -1,266 +1,141 @@
-import { Component, inject, AfterViewInit, signal } from '@angular/core';
-import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
-import { PORTFOLIO, Project, ASSETS_BASE } from '../../data/portfolio.data';
-import { ScrollAnimationService } from '../../services/scroll-animation.service';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { PortfolioService } from '../../services/portfolio.service';
+import { SectionHeading } from '../../shared/section-heading/section-heading';
+import { RevealDirective } from '../../directives/reveal.directive';
+import { TiltDirective } from '../../directives/tilt.directive';
+import { scaleIn } from '../../animations/portfolio.animations';
+import { LucideExternalLink, LucideX } from '@lucide/angular';
+import { SocialIcon } from '../../shared/social-icon/social-icon';
 
 @Component({
   selector: 'app-projects',
+  standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [SectionHeading, RevealDirective, TiltDirective, LucideExternalLink, LucideX, SocialIcon],
+  animations: [scaleIn],
   template: `
-    <section id="projects" class="section projects">
-      <div class="projects-header">
-        <h2 class="section-title">{{ data.projects.title }}</h2>
-        @if (data.projects.label) {
-          <span class="projects-label">{{ data.projects.label }}</span>
-        }
-      </div>
+    <section id="projects" class="section-pad relative z-10">
+      <div class="container-premium">
+        <app-section-heading
+          eyebrow="Portfolio"
+          [title]="p().projects.title"
+          subtitle="Selected products spanning AI, enterprise, and commerce."
+        />
 
-      <div class="projects-grid">
-        @for (project of data.projects.items; track project.title; let i = $index) {
-          <article
-            class="project-card reveal-item"
-            [class.featured]="project.featured"
-            (mouseenter)="setActiveImage(i, 0)"
-          >
-            <div class="project-visual">
-              <div class="project-carousel">
-                @for (img of project.imgs; track img; let j = $index) {
+        <div class="mb-8 flex flex-wrap gap-2" appReveal>
+          @for (cat of portfolio.categories(); track cat) {
+            <button
+              type="button"
+              class="rounded-full border px-4 py-2 text-sm transition"
+              [class.border-accent]="portfolio.filter() === cat"
+              [class.bg-accent/10]="portfolio.filter() === cat"
+              [class.text-accent]="portfolio.filter() === cat"
+              [class.border-border]="portfolio.filter() !== cat"
+              [class.text-text-muted]="portfolio.filter() !== cat"
+              (click)="portfolio.setFilter(cat)"
+            >
+              {{ cat }}
+            </button>
+          }
+        </div>
+
+        <div class="columns-1 gap-5 md:columns-2 xl:columns-3">
+          @for (project of portfolio.filteredProjects(); track project.id) {
+            <article
+              class="card-premium group mb-5 break-inside-avoid overflow-hidden"
+              appReveal
+              appTilt
+              [maxTilt]="7"
+            >
+              <button type="button" class="block w-full text-left" (click)="portfolio.openProject(project)">
+                <div class="relative overflow-hidden">
                   <img
-                    [src]="img"
+                    [src]="project.imgs[0]"
                     [alt]="project.title"
-                    class="project-img"
-                    [class.active]="getActiveImage(i) === j"
-                    (error)="onImgError($event)"
+                    class="aspect-[16/10] w-full object-cover transition duration-700 group-hover:scale-110"
+                    loading="lazy"
+                    width="640"
+                    height="400"
                   />
-                }
-                @if (project.imgs.length > 1) {
-                  <div class="carousel-dots">
-                    @for (img of project.imgs; track img; let j = $index) {
-                      <button
-                        class="dot"
-                        [class.active]="getActiveImage(i) === j"
-                        (click)="setActiveImage(i, j); $event.stopPropagation()"
-                      ></button>
+                  <div class="absolute inset-0 bg-gradient-to-t from-bg via-bg/20 to-transparent opacity-80 transition group-hover:opacity-95"></div>
+                  <div class="absolute inset-0 flex items-end p-5">
+                    <div>
+                      <p class="text-xs uppercase tracking-[0.2em] text-accent">{{ project.category }}</p>
+                      <h3 class="mt-1 font-display text-xl font-semibold">{{ project.title }}</h3>
+                    </div>
+                  </div>
+                </div>
+                <div class="space-y-4 p-5">
+                  <p class="line-clamp-3 text-sm text-text-muted">{{ project.description }}</p>
+                  <div class="flex flex-wrap gap-2">
+                    @for (tech of project.technologies.slice(0, 4); track tech) {
+                      <span class="rounded-full border border-border bg-surface px-2.5 py-1 text-[11px] text-text-dim">{{ tech }}</span>
                     }
                   </div>
-                }
-              </div>
-              @if (project.featured) {
-                <span class="featured-badge">Featured</span>
-              }
-            </div>
-            <div class="project-body">
-              <h3 class="project-title">{{ project.title }}</h3>
-              <p class="project-desc" [innerHTML]="getSafeDesc(project)"></p>
-              <div class="project-tech">
-                @for (tech of project.technologies; track tech) {
-                  <span class="tech-tag">{{ tech }}</span>
-                }
-              </div>
-              @if (project.link) {
-                <a class="project-link" [href]="project.link" target="_blank" rel="noopener">
-                  View Live Demo
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
-                    <polyline points="15 3 21 3 21 9"/>
-                    <line x1="10" y1="14" x2="21" y2="3"/>
-                  </svg>
-                </a>
-              }
-            </div>
-          </article>
-        }
+                </div>
+              </button>
+            </article>
+          }
+        </div>
       </div>
+
+      @if (portfolio.activeProject(); as project) {
+        <div
+          class="fixed inset-0 z-[80] flex items-center justify-center bg-black/70 p-4 backdrop-blur-md"
+          (click)="portfolio.closeProject()"
+          @scaleIn
+        >
+          <div
+            class="card-premium max-h-[90vh] w-full max-w-3xl overflow-y-auto p-0"
+            (click)="$event.stopPropagation()"
+            role="dialog"
+            aria-modal="true"
+            [attr.aria-label]="project.title"
+          >
+            <div class="relative">
+              <img [src]="project.imgs[0]" [alt]="project.title" class="max-h-72 w-full object-cover" />
+              <button
+                type="button"
+                class="absolute right-4 top-4 inline-flex h-10 w-10 items-center justify-center rounded-full border border-border glass-strong"
+                aria-label="Close project details"
+                (click)="portfolio.closeProject()"
+              >
+                <svg lucideX [size]="18"></svg>
+              </button>
+            </div>
+            <div class="space-y-4 p-6 md:p-8">
+              <div>
+                <p class="text-xs uppercase tracking-[0.2em] text-accent">{{ project.category }}</p>
+                <h3 class="mt-1 font-display text-3xl font-semibold">{{ project.title }}</h3>
+              </div>
+              <p class="text-text-muted">{{ project.description }}</p>
+              <div class="flex flex-wrap gap-2">
+                @for (tech of project.technologies; track tech) {
+                  <span class="rounded-full border border-border bg-surface px-3 py-1 text-xs text-text-dim">{{ tech }}</span>
+                }
+              </div>
+              <div class="flex flex-wrap gap-3 pt-2">
+                @if (project.link) {
+                  <a class="magnetic-btn btn-primary text-sm" [href]="project.link" target="_blank" rel="noopener">
+                    <svg lucideExternalLink [size]="16"></svg>
+                    Live Demo
+                  </a>
+                }
+                @if (project.github) {
+                  <a class="magnetic-btn btn-ghost text-sm" [href]="project.github" target="_blank" rel="noopener">
+                    <app-social-icon name="github" [size]="16" />
+                    GitHub
+                  </a>
+                }
+              </div>
+            </div>
+          </div>
+        </div>
+      }
     </section>
   `,
-  styles: `
-    .projects-header {
-      display: flex;
-      align-items: baseline;
-      gap: 1rem;
-      flex-wrap: wrap;
-    }
-    .projects-label {
-      font-size: 0.85rem;
-      color: var(--accent-cyan);
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-    }
-    .projects-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
-      gap: 2rem;
-    }
-    .project-card {
-      background: transparent;
-      border: 1px solid var(--glass-border);
-      border-radius: 16px;
-      overflow: hidden;
-      transition: border-color 0.4s, transform 0.4s;
-    }
-    .project-card:hover {
-      transform: translateY(-6px);
-      border-color: rgba(34, 211, 238, 0.25);
-    }
-    .project-card.featured {
-      border-color: rgba(34, 211, 238, 0.25);
-    }
-    .project-visual {
-      position: relative;
-      height: 220px;
-      overflow: hidden;
-      background: linear-gradient(135deg, #0f0f23, #1a1a3e);
-    }
-    .project-carousel {
-      position: relative;
-      width: 100%;
-      height: 100%;
-    }
-    .project-img {
-      position: absolute;
-      inset: 0;
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      opacity: 0;
-      transition: opacity 0.6s ease, transform 0.6s ease;
-      transform: scale(1.05);
-    }
-    .project-img.active {
-      opacity: 1;
-      transform: scale(1);
-    }
-    .carousel-dots {
-      position: absolute;
-      bottom: 12px;
-      left: 50%;
-      transform: translateX(-50%);
-      display: flex;
-      gap: 6px;
-      z-index: 2;
-    }
-    .dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      border: none;
-      background: rgba(255,255,255,0.3);
-      cursor: pointer;
-      padding: 0;
-      transition: all 0.3s;
-    }
-    .dot.active {
-      background: var(--accent-cyan);
-      transform: scale(1.3);
-    }
-    .featured-badge {
-      position: absolute;
-      top: 12px;
-      right: 12px;
-      padding: 0.3rem 0.85rem;
-      background: linear-gradient(135deg, var(--accent-cyan), #0891b2);
-      color: #000;
-      font-size: 0.7rem;
-      font-weight: 700;
-      border-radius: 999px;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      z-index: 2;
-    }
-    .project-body { padding: 1.5rem; }
-    .project-title {
-      font-size: 1.2rem;
-      font-weight: 700;
-      margin: 0 0 0.75rem;
-      color: var(--text-primary);
-    }
-    .project-desc {
-      font-size: 0.9rem;
-      line-height: 1.7;
-      color: var(--text-secondary);
-      margin: 0 0 1rem;
-    }
-    .project-tech {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.4rem;
-      margin-bottom: 1rem;
-    }
-    .tech-tag {
-      padding: 0.25rem 0.7rem;
-      background: rgba(99, 102, 241, 0.1);
-      border-radius: 6px;
-      font-size: 0.75rem;
-      color: var(--accent-indigo);
-      font-weight: 500;
-    }
-    .project-link {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.4rem;
-      color: var(--accent-cyan);
-      text-decoration: none;
-      font-size: 0.9rem;
-      font-weight: 600;
-      transition: gap 0.3s;
-    }
-    .project-link:hover { gap: 0.7rem; }
-    @media (max-width: 768px) {
-      .project-visual { height: 200px; }
-      .project-body { padding: 1.25rem; }
-    }
-    @media (max-width: 480px) {
-      .projects-grid { grid-template-columns: 1fr; gap: 1.5rem; }
-      .project-visual { height: 180px; }
-      .project-title { font-size: 1.05rem; }
-      .project-desc { font-size: 0.85rem; }
-    }
-  `,
 })
-export class Projects implements AfterViewInit {
-  readonly data = PORTFOLIO;
-  private readonly sanitizer = inject(DomSanitizer);
-  private readonly scrollAnim = inject(ScrollAnimationService);
-  private readonly activeImages = signal<Record<number, number>>({});
-  private readonly descCache = new Map<string, SafeHtml>();
-  private carouselIntervals: ReturnType<typeof setInterval>[] = [];
-
-  ngAfterViewInit(): void {
-    this.scrollAnim.sectionTitle('#projects .section-title');
-    this.scrollAnim.reveal('#projects .reveal-item', { y: 50, stagger: 0.15 });
-    this.startCarousels();
-  }
-
-  getSafeDesc(project: Project): SafeHtml {
-    if (!this.descCache.has(project.title)) {
-      this.descCache.set(
-        project.title,
-        this.sanitizer.bypassSecurityTrustHtml(project.description),
-      );
-    }
-    return this.descCache.get(project.title)!;
-  }
-
-  getActiveImage(projectIndex: number): number {
-    return this.activeImages()[projectIndex] ?? 0;
-  }
-
-  setActiveImage(projectIndex: number, imageIndex: number): void {
-    this.activeImages.update((map) => ({ ...map, [projectIndex]: imageIndex }));
-  }
-
-  onImgError(event: Event): void {
-    const img = event.target as HTMLImageElement;
-    img.src = `${ASSETS_BASE}/icons/icon-192x192.png`;
-  }
-
-  private startCarousels(): void {
-    this.data.projects.items.forEach((project, i) => {
-      if (project.imgs.length <= 1) return;
-      const interval = setInterval(() => {
-        const current = this.getActiveImage(i);
-        this.setActiveImage(i, (current + 1) % project.imgs.length);
-      }, 4000);
-      this.carouselIntervals.push(interval);
-    });
-  }
+export class Projects {
+  readonly portfolio = inject(PortfolioService);
+  readonly p = () => this.portfolio.portfolio();
 }

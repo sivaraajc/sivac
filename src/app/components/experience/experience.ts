@@ -1,156 +1,52 @@
-import { Component, inject, AfterViewInit, signal } from '@angular/core';
-import { PORTFOLIO } from '../../data/portfolio.data';
-import { ScrollAnimationService } from '../../services/scroll-animation.service';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { PortfolioService } from '../../services/portfolio.service';
+import { SectionHeading } from '../../shared/section-heading/section-heading';
+import { RevealDirective } from '../../directives/reveal.directive';
 
 @Component({
   selector: 'app-experience',
+  standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [SectionHeading, RevealDirective],
   template: `
-    <section id="experience" class="section experience">
-      <h2 class="section-title">{{ data.experience.title }}</h2>
+    <section id="experience" class="section-pad relative z-10">
+      <div class="container-premium">
+        <app-section-heading
+          eyebrow="Career"
+          title="Experience"
+          subtitle="Milestones across enterprise Angular platforms and full-stack delivery."
+        />
 
-      <div class="exp-tabs reveal-item">
-        @for (job of data.experience.jobs; track job.tab; let i = $index) {
-          <button
-            class="exp-tab"
-            [class.active]="activeTab() === i"
-            (click)="setTab(i)"
-          >{{ job.tab }}</button>
-        }
-      </div>
-
-      @for (job of data.experience.jobs; track job.tab; let i = $index) {
-        @if (activeTab() === i) {
-          <div class="exp-card reveal-item">
-            <div class="exp-header">
-              <div>
-                <h3 class="exp-title">{{ job.title }}</h3>
-                <p class="exp-company">{{ job.company }}</p>
+        <div class="relative ml-3 border-l border-border pl-8 md:ml-4 md:pl-12">
+          @for (job of p().experience.jobs; track job.tab; let i = $index) {
+            <article class="relative mb-10 last:mb-0" [appReveal]="i % 2 === 0 ? 'left' : 'right'">
+              <span class="absolute -left-[2.55rem] top-2 h-4 w-4 rounded-full border-2 border-accent bg-bg shadow-[0_0_20px_rgba(45,212,191,0.55)] md:-left-[3.55rem]"></span>
+              <div class="card-premium p-6 md:p-8">
+                <div class="flex flex-wrap items-start justify-between gap-3">
+                  <div>
+                    <p class="text-xs font-semibold uppercase tracking-[0.22em] text-accent">{{ job.tab }}</p>
+                    <h3 class="mt-2 font-display text-2xl font-semibold">{{ job.title }}</h3>
+                    <p class="mt-1 text-sm text-text-muted">{{ job.company }}</p>
+                  </div>
+                  <span class="rounded-full border border-border bg-surface px-3 py-1 text-xs text-text-dim">{{ job.date }}</span>
+                </div>
+                <ul class="mt-5 space-y-3">
+                  @for (item of job.description; track item) {
+                    <li class="flex gap-3 text-sm leading-relaxed text-text-muted md:text-base">
+                      <span class="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-accent-2"></span>
+                      <span>{{ item }}</span>
+                    </li>
+                  }
+                </ul>
               </div>
-              <span class="exp-date">{{ job.date }}</span>
-            </div>
-            <ul class="exp-list">
-              @for (item of job.description; track item) {
-                <li class="exp-item">{{ item }}</li>
-              }
-            </ul>
-          </div>
-        }
-      }
+            </article>
+          }
+        </div>
+      </div>
     </section>
   `,
-  styles: `
-    .exp-tabs {
-      display: flex;
-      gap: 0.5rem;
-      margin-bottom: 2rem;
-      flex-wrap: wrap;
-    }
-    .exp-tab {
-      padding: 0.65rem 1.5rem;
-      background: transparent;
-      border: 1px solid var(--glass-border);
-      border-radius: 999px;
-      color: var(--text-muted);
-      font-size: 0.9rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.3s;
-      font-family: inherit;
-    }
-    .exp-tab:hover {
-      border-color: rgba(99, 102, 241, 0.4);
-      color: var(--text-primary);
-    }
-    .exp-tab.active {
-      background: linear-gradient(135deg, var(--accent-indigo), #4f46e5);
-      border-color: transparent;
-      color: white;
-      box-shadow: 0 4px 20px rgba(99, 102, 241, 0.35);
-    }
-    .exp-card {
-      background: var(--glass-bg);
-      border: 1px solid var(--glass-border);
-      border-radius: 20px;
-      padding: 2rem;
-      backdrop-filter: blur(16px);
-      animation: fadeIn 0.5s ease;
-    }
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(20px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-    .exp-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      gap: 1rem;
-      margin-bottom: 1.5rem;
-      flex-wrap: wrap;
-    }
-    .exp-title {
-      font-size: 1.35rem;
-      font-weight: 700;
-      margin: 0;
-      color: var(--text-primary);
-    }
-    .exp-company {
-      font-size: 0.95rem;
-      color: var(--accent-cyan);
-      margin: 0.25rem 0 0;
-    }
-    .exp-date {
-      font-size: 0.85rem;
-      color: var(--text-muted);
-      padding: 0.35rem 1rem;
-      background: rgba(99, 102, 241, 0.1);
-      border-radius: 999px;
-      white-space: nowrap;
-    }
-    .exp-list {
-      list-style: none;
-      padding: 0;
-      margin: 0;
-    }
-    .exp-item {
-      position: relative;
-      padding-left: 1.5rem;
-      margin-bottom: 0.85rem;
-      font-size: 0.95rem;
-      line-height: 1.7;
-      color: var(--text-secondary);
-    }
-    .exp-item::before {
-      content: '▹';
-      position: absolute;
-      left: 0;
-      color: var(--accent-indigo);
-      font-weight: bold;
-    }
-    @media (max-width: 768px) {
-      .exp-tab { padding: 0.55rem 1.1rem; font-size: 0.82rem; }
-      .exp-card { padding: 1.35rem; border-radius: 16px; }
-      .exp-header { flex-direction: column; align-items: flex-start; }
-      .exp-date { align-self: flex-start; }
-      .exp-title { font-size: 1.15rem; }
-    }
-    @media (max-width: 480px) {
-      .exp-tabs { gap: 0.4rem; }
-      .exp-tab { padding: 0.5rem 0.9rem; font-size: 0.75rem; }
-      .exp-item { font-size: 0.9rem; }
-    }
-  `,
 })
-export class Experience implements AfterViewInit {
-  readonly data = PORTFOLIO;
-  readonly activeTab = signal(0);
-  private readonly scrollAnim = inject(ScrollAnimationService);
-
-  ngAfterViewInit(): void {
-    this.scrollAnim.sectionTitle('#experience .section-title');
-    this.scrollAnim.reveal('#experience .reveal-item', { y: 40 });
-  }
-
-  setTab(index: number): void {
-    this.activeTab.set(index);
-  }
+export class Experience {
+  private readonly portfolio = inject(PortfolioService);
+  readonly p = () => this.portfolio.portfolio();
 }

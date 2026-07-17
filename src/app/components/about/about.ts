@@ -1,103 +1,74 @@
-import { Component, inject, AfterViewInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
-import { PORTFOLIO } from '../../data/portfolio.data';
-import { ScrollAnimationService } from '../../services/scroll-animation.service';
+import { PortfolioService } from '../../services/portfolio.service';
+import { SectionHeading } from '../../shared/section-heading/section-heading';
+import { RevealDirective } from '../../directives/reveal.directive';
+import { CountUpDirective } from '../../directives/count-up.directive';
 
 @Component({
   selector: 'app-about',
+  standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [SectionHeading, RevealDirective, CountUpDirective],
   template: `
-    <section id="about" class="section about">
-      <h2 class="section-title">{{ data.about.title }}</h2>
-      <div class="about-grid">
-        <div class="about-text">
-          @for (para of safeParagraphs; track $index) {
-            <p class="about-para reveal-item" [innerHTML]="para"></p>
-          }
-        </div>
-        <div class="about-stats reveal-item">
-          <div class="stat-card">
-            <span class="stat-number">3+</span>
-            <span class="stat-label">Years Experience</span>
+    <section id="about" class="section-pad relative z-10">
+      <div class="container-premium">
+        <app-section-heading
+          eyebrow="Introduction"
+          title="About Me"
+          subtitle="Senior Software Engineer crafting scalable Angular systems with premium craft."
+        />
+
+        <div class="grid items-start gap-10 lg:grid-cols-[0.9fr_1.1fr]">
+          <div class="card-premium relative overflow-hidden p-3" appReveal="left">
+            <img
+              [src]="p().avatarImage"
+              [alt]="p().fullName"
+              class="aspect-[4/5] w-full rounded-[16px] object-cover"
+              loading="lazy"
+              width="520"
+              height="650"
+            />
+            <div class="absolute bottom-6 left-6 right-6 rounded-2xl border border-border glass-strong p-4">
+              <p class="font-display text-lg">{{ p().title }}</p>
+              <p class="text-sm text-text-muted">{{ p().location }}</p>
+            </div>
           </div>
-          <div class="stat-card">
-            <span class="stat-number">30%</span>
-            <span class="stat-label">Faster Delivery</span>
-          </div>
-          <div class="stat-card">
-            <span class="stat-number">40%</span>
-            <span class="stat-label">Less Code Duplication</span>
-          </div>
-          <div class="stat-card">
-            <span class="stat-number">15+</span>
-            <span class="stat-label">Projects Delivered</span>
+
+          <div class="space-y-5" appReveal="right">
+            @for (para of p().about.paragraphs; track $index) {
+              <p class="text-base leading-relaxed text-text-muted md:text-lg" [innerHTML]="safe(para)"></p>
+            }
+
+            <div class="mt-8 grid grid-cols-2 gap-4 md:grid-cols-4">
+              @for (stat of p().stats; track stat.label) {
+                <div class="card-premium p-4 text-center">
+                  <p class="font-display text-3xl font-semibold text-accent">
+                    <span [appCountUp]="stat.value" [suffix]="stat.suffix">0</span>
+                  </p>
+                  <p class="mt-1 text-xs uppercase tracking-[0.16em] text-text-dim">{{ stat.label }}</p>
+                </div>
+              }
+            </div>
+
+            <div class="card-premium mt-6 p-5" appReveal>
+              <p class="mb-2 text-xs font-semibold uppercase tracking-[0.22em] text-accent">Education</p>
+              <p class="font-display text-lg font-medium">{{ p().education.degree }}</p>
+              <p class="text-sm text-text-muted">{{ p().education.school }}</p>
+              <p class="mt-1 text-xs text-text-dim">{{ p().education.date }} · {{ p().education.gpa }}</p>
+            </div>
           </div>
         </div>
       </div>
     </section>
   `,
-  styles: `
-    .about-grid {
-      display: grid;
-      grid-template-columns: 1.2fr 1fr;
-      gap: 3rem;
-      align-items: start;
-    }
-    .about-para {
-      font-size: 1.05rem;
-      line-height: 1.85;
-      color: var(--text-secondary);
-      margin-bottom: 1.25rem;
-    }
-    .about-stats {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 1rem;
-    }
-    .stat-card {
-      background: transparent;
-      border: 1px solid var(--glass-border);
-      border-radius: 12px;
-      padding: 1.5rem;
-      text-align: center;
-      transition: border-color 0.3s;
-    }
-    .stat-card:hover {
-      border-color: rgba(34, 211, 238, 0.3);
-    }
-    .stat-number {
-      display: block;
-      font-family: var(--font-display);
-      font-size: 2rem;
-      font-weight: 700;
-      color: var(--accent-cyan);
-    }
-    .stat-label {
-      font-size: 0.8rem;
-      color: var(--text-muted);
-      margin-top: 0.25rem;
-    }
-    @media (max-width: 768px) {
-      .about-grid { grid-template-columns: 1fr; gap: 2rem; }
-      .about-para { font-size: 1rem; }
-    }
-    @media (max-width: 480px) {
-      .about-stats { grid-template-columns: 1fr; }
-      .stat-card { padding: 1.15rem; }
-      .stat-number { font-size: 1.65rem; }
-    }
-  `,
 })
-export class About implements AfterViewInit {
-  readonly data = PORTFOLIO;
+export class About {
+  private readonly portfolio = inject(PortfolioService);
   private readonly sanitizer = inject(DomSanitizer);
-  private readonly scrollAnim = inject(ScrollAnimationService);
+  readonly p = () => this.portfolio.portfolio();
 
-  readonly safeParagraphs: SafeHtml[] = PORTFOLIO.about.paragraphs.map((p) =>
-    this.sanitizer.bypassSecurityTrustHtml(p),
-  );
-
-  ngAfterViewInit(): void {
-    this.scrollAnim.sectionTitle('#about .section-title');
-    this.scrollAnim.reveal('#about .reveal-item', { y: 40, stagger: 0.1 });
+  safe(html: string): SafeHtml {
+    return this.sanitizer.bypassSecurityTrustHtml(html);
   }
 }
