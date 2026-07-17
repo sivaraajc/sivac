@@ -16,48 +16,49 @@ import { CountUpDirective } from '../../directives/count-up.directive';
         <app-section-heading
           eyebrow="Introduction"
           title="About Me"
-          subtitle="Senior Software Engineer"
+          subtitle="Craft, systems thinking, and a career aimed at shipping exceptional software."
         />
 
-        <div class="grid items-start gap-10 lg:grid-cols-[0.9fr_1.1fr]">
-          <div class="card-premium relative overflow-hidden p-3" appReveal="left">
-            <img
-              [src]="p().avatarImage"
-              [alt]="p().fullName"
-              class="aspect-[4/5] w-full rounded-[16px] object-cover"
-              loading="lazy"
-              width="520"
-              height="650"
-            />
-            <div class="absolute bottom-6 left-6 right-6 rounded-2xl border border-border glass-strong p-4">
-              <p class="font-display text-lg">{{ p().title }}</p>
-              <p class="text-sm text-text-muted">{{ p().location }}</p>
-            </div>
-          </div>
-
-          <div class="space-y-5" appReveal="right">
+        <div class="grid items-start gap-6 lg:grid-cols-2">
+          <div class="space-y-5" appReveal="left">
             @for (para of p().about.paragraphs; track $index) {
               <p class="text-base leading-relaxed text-text-muted md:text-lg" [innerHTML]="safe(para)"></p>
             }
-
-            <div class="mt-8 grid grid-cols-2 gap-4 md:grid-cols-4">
-              @for (stat of p().stats; track stat.label) {
-                <div class="card-premium p-4 text-center">
-                  <p class="font-display text-3xl font-semibold text-accent">
-                    <span [appCountUp]="stat.value" [suffix]="stat.suffix">0</span>
-                  </p>
-                  <p class="mt-1 text-xs uppercase tracking-[0.16em] text-text-dim">{{ stat.label }}</p>
-                </div>
-              }
-            </div>
-
-            <div class="card-premium mt-6 p-5" appReveal>
-              <p class="mb-2 text-xs font-semibold uppercase tracking-[0.22em] text-accent">Education</p>
-              <p class="font-display text-lg font-medium">{{ p().education.degree }}</p>
-              <p class="text-sm text-text-muted">{{ p().education.school }}</p>
-              <p class="mt-1 text-xs text-text-dim">{{ p().education.date }} · {{ p().education.gpa }}</p>
-            </div>
           </div>
+
+          <div class="grid gap-4 sm:grid-cols-2" appReveal="right">
+            <article class="card-premium gradient-border p-5 sm:col-span-2">
+              <p class="mb-2 font-mono text-[10px] uppercase tracking-[0.22em] text-accent">Experience</p>
+              <p class="font-display text-xl font-semibold">{{ p().title }}</p>
+              <p class="mt-1 text-sm text-text-muted">{{ p().experience.jobs[0].company }}</p>
+              <p class="mt-2 text-xs text-text-dim">{{ p().experience.jobs[0].date }} · {{ p().location }}</p>
+            </article>
+
+            <article class="card-premium gradient-border p-5">
+              <p class="mb-2 font-mono text-[10px] uppercase tracking-[0.22em] text-accent-3">Education</p>
+              <p class="font-display text-base font-medium leading-snug">{{ p().education.degree }}</p>
+              <p class="mt-2 text-xs text-text-muted">{{ p().education.school }}</p>
+              <p class="mt-1 text-xs text-text-dim">{{ p().education.gpa }}</p>
+            </article>
+
+            <article class="card-premium gradient-border p-5">
+              <p class="mb-2 font-mono text-[10px] uppercase tracking-[0.22em] text-neon">Career Goals</p>
+              <p class="text-sm leading-relaxed text-text-muted">
+                Lead high-impact frontend architecture, mentor engineers, and build AI-augmented products that feel cinematic and ship reliably.
+              </p>
+            </article>
+          </div>
+        </div>
+
+        <div class="mt-10 grid grid-cols-2 gap-4 md:grid-cols-5" appReveal>
+          @for (stat of p().stats; track stat.label) {
+            <div class="card-premium gradient-border p-4 text-center">
+              <p class="font-display text-3xl font-semibold text-gradient md:text-4xl">
+                <span [appCountUp]="stat.value" [suffix]="stat.suffix">0</span>
+              </p>
+              <p class="mt-2 text-[10px] uppercase tracking-[0.14em] text-text-dim">{{ stat.label }}</p>
+            </div>
+          }
         </div>
       </div>
     </section>

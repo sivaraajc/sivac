@@ -22,6 +22,12 @@ export interface Project {
   link?: string;
   github?: string;
   featured?: boolean;
+  status?: 'Live' | 'Production' | 'Internal';
+  stars?: number;
+  commits?: number;
+  lighthouse?: number;
+  latency?: string;
+  architecture?: string;
 }
 
 export interface SkillItem {
@@ -54,6 +60,24 @@ export interface StatItem {
   suffix: string;
 }
 
+export interface DevIdentity {
+  badges: string[];
+  terminalLines: string[];
+  codeSnippet: string[];
+  orbitTechs: string[];
+}
+
+export interface DevWidgetStats {
+  years: number;
+  projects: number;
+  technologies: number;
+  contributions: number;
+  streak: number;
+  codingHours: number;
+  openSource: number;
+  coffee: number;
+}
+
 export interface PortfolioData {
   name: string;
   fullName: string;
@@ -69,6 +93,8 @@ export interface PortfolioData {
   avatarImage: string;
   tagline: string;
   roles: string[];
+  identity: DevIdentity;
+  widgets: DevWidgetStats;
   about: {
     title: string;
     paragraphs: string[];

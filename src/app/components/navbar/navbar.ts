@@ -25,10 +25,10 @@ import { fadeIn } from '../../animations/portfolio.animations';
       [class.py-2]="scrolled()"
     >
       <div
-        class="container-premium flex items-center justify-between rounded-[20px] px-4 py-3 transition-all duration-500 md:px-6"
+        class="container-premium flex items-center justify-between rounded-[20px] border border-border/60 px-4 py-3 transition-all duration-500 md:px-6 glass"
         [class.glass-strong]="scrolled()"
-        [class.border]="scrolled()"
-        [class.border-border]="scrolled()"
+        [class.border-border-strong]="scrolled()"
+        [class.shadow-glow]="scrolled()"
       >
         <a
           href="#home"

@@ -11,7 +11,7 @@ import { SocialIcon } from '../../shared/social-icon/social-icon';
   imports: [LucideMail, SocialIcon],
   template: `
     <footer class="relative z-10 border-t border-border pb-10 pt-16">
-      <div class="mx-auto mb-10 h-px w-[min(1180px,calc(100%-2.5rem))] bg-gradient-to-r from-transparent via-accent/50 to-transparent"></div>
+      <div class="mx-auto mb-10 h-px w-[min(1180px,calc(100%-2.5rem))] bg-gradient-to-r from-transparent via-accent-2/60 to-transparent shadow-[0_0_20px_rgba(124,58,237,0.5)]"></div>
       <div class="container-premium grid gap-10 md:grid-cols-[1.4fr_1fr_1fr]">
         <div>
           <p class="font-display text-2xl font-semibold">
@@ -66,9 +66,10 @@ import { SocialIcon } from '../../shared/social-icon/social-icon';
       transition: border-color 0.3s ease, transform 0.3s ease, color 0.3s ease;
     }
     .social:hover {
-      border-color: rgba(45, 212, 191, 0.45);
-      color: #2dd4bf;
+      border-color: rgba(168, 85, 247, 0.5);
+      color: #a855f7;
       transform: translateY(-2px);
+      box-shadow: 0 0 20px rgba(124, 58, 237, 0.3);
     }
   `,
 })

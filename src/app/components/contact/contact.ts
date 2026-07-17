@@ -35,8 +35,9 @@ import { SocialIcon } from '../../shared/social-icon/social-icon';
   ],
   animations: [fadeIn],
   template: `
-    <section id="contact" class="section-pad relative z-10">
-      <div class="container-premium">
+    <section id="contact" class="section-pad relative z-10 overflow-hidden">
+      <div class="contact-waves" aria-hidden="true"></div>
+      <div class="container-premium relative">
         <app-section-heading
           [eyebrow]="p().contact.pretitle"
           [title]="p().contact.title"
@@ -45,7 +46,7 @@ import { SocialIcon } from '../../shared/social-icon/social-icon';
 
         <div class="grid gap-8 lg:grid-cols-[0.9fr_1.1fr]">
           <div class="space-y-4" appReveal="left">
-            <div class="card-premium p-6">
+            <div class="card-premium gradient-border p-6">
               <p class="text-xs uppercase tracking-[0.2em] text-text-dim">Email</p>
               <div class="mt-3 flex items-center justify-between gap-3">
                 <a class="truncate text-lg text-accent hover:underline" [href]="'mailto:' + p().email">{{ p().email }}</a>
@@ -63,11 +64,15 @@ import { SocialIcon } from '../../shared/social-icon/social-icon';
                 </button>
               </div>
             </div>
-            <div class="card-premium p-6">
+            <div class="card-premium gradient-border p-6">
+              <p class="text-xs uppercase tracking-[0.2em] text-text-dim">Location</p>
+              <p class="mt-3 text-lg">{{ p().location }}</p>
+            </div>
+            <div class="card-premium gradient-border p-6">
               <p class="text-xs uppercase tracking-[0.2em] text-text-dim">Phone</p>
               <p class="mt-3 text-lg">{{ p().phone }}</p>
             </div>
-            <div class="flex gap-3">
+            <div class="flex flex-wrap gap-3">
               <a [href]="p().github" target="_blank" rel="noopener" class="social" aria-label="GitHub">
                 <app-social-icon name="github" />
               </a>
@@ -77,10 +82,19 @@ import { SocialIcon } from '../../shared/social-icon/social-icon';
               <a [href]="'mailto:' + p().email" class="social" aria-label="Email">
                 <svg lucideMail [size]="18"></svg>
               </a>
+              <a
+                class="magnetic-btn btn-ghost text-sm"
+                [href]="p().cvPath"
+                target="_blank"
+                rel="noopener"
+                appMagnetic
+              >
+                Resume
+              </a>
             </div>
           </div>
 
-          <form class="card-premium space-y-5 p-6 md:p-8" [formGroup]="form" (ngSubmit)="submit()" appReveal="right">
+          <form class="card-premium gradient-border space-y-5 p-6 md:p-8" [formGroup]="form" (ngSubmit)="submit()" appReveal="right">
             <div class="field">
               <input id="name" type="text" formControlName="name" placeholder=" " required />
               <label for="name">Your name</label>
@@ -103,13 +117,21 @@ import { SocialIcon } from '../../shared/social-icon/social-icon';
               }
             </div>
 
-            <button class="magnetic-btn btn-primary w-full sm:w-auto" type="submit" appMagnetic [disabled]="form.invalid || sending()">
+            <button class="magnetic-btn btn-primary w-full sm:w-auto" type="submit" appMagnetic [disabled]="form.invalid || sending()" data-cursor="Send">
               <svg lucideSend [size]="16"></svg>
-              {{ sending() ? 'Sending…' : p().contact.btn }}
+              {{ sending() ? 'Launching…' : p().contact.btn }}
             </button>
 
             @if (success()) {
-              <p class="text-sm text-accent" @fadeIn>Message prepared — your mail client should open shortly. Thank you!</p>
+              <div class="success-stage" @fadeIn>
+                <div class="plane" aria-hidden="true">✈</div>
+                <p class="text-sm text-accent">Message prepared — opening your mail client. Thank you!</p>
+                <div class="confetti" aria-hidden="true">
+                  @for (c of confetti; track c) {
+                    <span [style.--i]="c"></span>
+                  }
+                </div>
+              </div>
             }
           </form>
         </div>
@@ -117,6 +139,16 @@ import { SocialIcon } from '../../shared/social-icon/social-icon';
     </section>
   `,
   styles: `
+    .contact-waves {
+      pointer-events: none;
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse at 20% 80%, rgba(124, 58, 237, 0.18), transparent 40%),
+        radial-gradient(ellipse at 80% 70%, rgba(6, 182, 212, 0.12), transparent 42%),
+        radial-gradient(ellipse at 50% 100%, rgba(255, 77, 141, 0.1), transparent 45%);
+      animation: wavePulse 10s ease-in-out infinite alternate;
+    }
     .field {
       position: relative;
     }
@@ -147,8 +179,8 @@ import { SocialIcon } from '../../shared/social-icon/social-icon';
     .field textarea:focus,
     .field input:not(:placeholder-shown),
     .field textarea:not(:placeholder-shown) {
-      border-color: rgba(45, 212, 191, 0.45);
-      box-shadow: 0 0 0 3px rgba(45, 212, 191, 0.08);
+      border-color: rgba(168, 85, 247, 0.5);
+      box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.12);
     }
     .field input:focus + label,
     .field textarea:focus + label,
@@ -156,7 +188,7 @@ import { SocialIcon } from '../../shared/social-icon/social-icon';
     .field textarea:not(:placeholder-shown) + label {
       transform: translateY(-0.55rem);
       font-size: 0.7rem;
-      color: #2dd4bf;
+      color: #a855f7;
     }
     .error {
       display: block;
@@ -176,9 +208,50 @@ import { SocialIcon } from '../../shared/social-icon/social-icon';
       transition: 0.3s ease;
     }
     .social:hover {
-      border-color: rgba(45, 212, 191, 0.4);
-      color: #2dd4bf;
+      border-color: rgba(168, 85, 247, 0.5);
+      color: #a855f7;
       transform: translateY(-2px);
+      box-shadow: 0 0 24px rgba(124, 58, 237, 0.25);
+    }
+    .success-stage {
+      position: relative;
+      overflow: hidden;
+      border-radius: 16px;
+      border: 1px solid rgba(168, 85, 247, 0.35);
+      background: rgba(124, 58, 237, 0.08);
+      padding: 1rem;
+    }
+    .plane {
+      display: inline-block;
+      margin-bottom: 0.4rem;
+      animation: fly 1.2s ease forwards;
+    }
+    .confetti {
+      pointer-events: none;
+      position: absolute;
+      inset: 0;
+    }
+    .confetti span {
+      position: absolute;
+      left: calc(var(--i) * 8%);
+      top: 100%;
+      width: 6px;
+      height: 10px;
+      border-radius: 2px;
+      background: hsl(calc(var(--i) * 36), 90%, 60%);
+      animation: confetti 1.4s ease-out forwards;
+      animation-delay: calc(var(--i) * 0.03s);
+    }
+    @keyframes fly {
+      from { transform: translate(0, 8px) rotate(-12deg); opacity: 0; }
+      to { transform: translate(120px, -40px) rotate(18deg); opacity: 1; }
+    }
+    @keyframes confetti {
+      to { transform: translateY(-140px) rotate(220deg); opacity: 0; }
+    }
+    @keyframes wavePulse {
+      from { opacity: 0.6; transform: scale(1); }
+      to { opacity: 1; transform: scale(1.04); }
     }
   `,
 })
@@ -190,6 +263,7 @@ export class Contact {
   readonly copied = signal(false);
   readonly sending = signal(false);
   readonly success = signal(false);
+  readonly confetti = Array.from({ length: 18 }, (_, i) => i);
 
   readonly form = this.fb.nonNullable.group({
     name: ['', [Validators.required, Validators.minLength(2)]],
@@ -221,9 +295,11 @@ export class Contact {
     const { name, email, message } = this.form.getRawValue();
     const subject = encodeURIComponent(`Portfolio inquiry from ${name}`);
     const body = encodeURIComponent(`${message}\n\n— ${name} (${email})`);
-    window.location.href = `mailto:${this.p().email}?subject=${subject}&body=${body}`;
     this.success.set(true);
-    this.sending.set(false);
-    this.form.reset();
+    setTimeout(() => {
+      window.location.href = `mailto:${this.p().email}?subject=${subject}&body=${body}`;
+      this.sending.set(false);
+      this.form.reset();
+    }, 700);
   }
 }

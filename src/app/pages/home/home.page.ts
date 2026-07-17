@@ -10,6 +10,7 @@ import { About } from '../../components/about/about';
 import { Skills } from '../../components/skills/skills';
 import { Experience } from '../../components/experience/experience';
 import { Projects } from '../../components/projects/projects';
+import { DevWidgets } from '../../components/dev-widgets/dev-widgets';
 import { Services } from '../../components/services/services';
 import { Testimonials } from '../../components/testimonials/testimonials';
 import { Contact } from '../../components/contact/contact';
@@ -21,13 +22,14 @@ import { PortfolioService } from '../../services/portfolio.service';
   selector: 'app-home-page',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [Hero, About, Skills, Experience, Projects, Services, Testimonials, Contact],
+  imports: [Hero, About, Skills, Experience, Projects, DevWidgets, Services, Testimonials, Contact],
   template: `
     <app-hero />
     <app-about />
     <app-skills />
     <app-experience />
     <app-projects />
+    <app-dev-widgets />
     <app-services />
     <app-testimonials />
     <app-contact />
