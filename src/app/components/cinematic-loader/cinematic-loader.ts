@@ -20,7 +20,7 @@ import { ExperienceModeService } from '../../services/experience-mode.service';
         <div class="loader-core">
           <div class="logo-ring"></div>
           <p class="font-display text-4xl font-semibold tracking-tight md:text-6xl">
-            <span class="text-gradient">{{ name }}</span><span class="text-accent">.</span>
+            <span class="text-gradient">{{ name }}</span>
           </p>
           <p class="mt-4 font-mono text-xs uppercase tracking-[0.35em] text-text-dim">{{ status() }}</p>
           <div class="mt-8 h-[2px] w-56 overflow-hidden rounded-full bg-white/10">
@@ -90,7 +90,7 @@ export class CinematicLoader implements OnInit {
   readonly exiting = signal(false);
   readonly progress = signal(0);
   readonly status = signal('boot sequence');
-  readonly name = 'Sivaraaj';
+  readonly name = 'Sivaraaj C';
 
   private readonly stages = [
     { at: 12, text: 'mounting workspace' },

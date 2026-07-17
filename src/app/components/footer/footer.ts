@@ -15,7 +15,7 @@ import { SocialIcon } from '../../shared/social-icon/social-icon';
       <div class="container-premium grid gap-10 md:grid-cols-[1.4fr_1fr_1fr]">
         <div>
           <p class="font-display text-2xl font-semibold">
-            <span class="text-gradient">{{ p().name }}</span><span class="text-accent">.</span>
+            <span class="text-gradient">{{ p().name }}</span>
           </p>
           <p class="mt-3 max-w-md text-sm text-text-muted">{{ p().tagline }}</p>
         </div>
@@ -49,7 +49,7 @@ import { SocialIcon } from '../../shared/social-icon/social-icon';
         </div>
       </div>
       <p class="container-premium mt-12 text-xs text-text-dim">
-        © {{ year }} {{ p().fullName }}. Crafted with Angular, GSAP & Three.js.
+        © {{ year }} {{ p().fullName }}.
       </p>
     </footer>
   `,

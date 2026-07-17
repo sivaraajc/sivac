@@ -113,7 +113,7 @@ export class AiOrb {
     },
   ]);
 
-  readonly quick = ['Skills', 'Projects', 'Experience', 'Contact', 'Matrix mode'];
+  readonly quick = ['Skills', 'Projects', 'Experience', 'Contact'];
 
   @HostListener('document:keydown', ['$event'])
   onKey(e: KeyboardEvent): void {

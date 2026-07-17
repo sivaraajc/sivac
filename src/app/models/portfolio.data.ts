@@ -4,7 +4,7 @@ import { PortfolioData } from '../models/portfolio.model';
 export const ASSETS_BASE = 'assets/assets';
 
 export const PORTFOLIO_DATA: PortfolioData = {
-  name: 'Sivaraaj',
+  name: 'Sivaraaj C',
   fullName: 'Sivaraaj C',
   title: 'Senior Software Engineer',
   location: 'Chennai, Tamil Nadu, India',
@@ -17,7 +17,7 @@ export const PORTFOLIO_DATA: PortfolioData = {
   heroAvatarImage: `${ASSETS_BASE}/images/siva-avatar.png`,
   avatarImage: `${ASSETS_BASE}/images/siva-avatar.png`,
   tagline:
-    'I craft scalable Angular systems, production APIs, and cinematic developer experiences — engineered for performance and polish.',
+    'I build scalable and efficient software solutions to solve real-world problems.',
   roles: [
     'Software Developer',
     'Full Stack Engineer',
@@ -55,7 +55,6 @@ export const PORTFOLIO_DATA: PortfolioData = {
       "};",
     ],
     orbitTechs: [
-      'React',
       'Angular',
       'Node.js',
       'Express',
@@ -65,9 +64,7 @@ export const PORTFOLIO_DATA: PortfolioData = {
       'Java',
       'Spring Boot',
       'Docker',
-      'AWS',
       'Git',
-      'TensorFlow',
       'Firebase',
       'TypeScript',
       'Linux',
@@ -109,7 +106,7 @@ export const PORTFOLIO_DATA: PortfolioData = {
     { label: 'Projects Completed', value: 20, suffix: '+' },
     { label: 'Hackathons', value: 4, suffix: '+' },
     { label: 'Certificates', value: 3, suffix: '' },
-    { label: 'GitHub Contributions', value: 420, suffix: '+' },
+    { label: 'GitHub Contributions', value: 20, suffix: '+' },
     { label: 'Clients & Teams', value: 8, suffix: '+' },
   ],
 
@@ -134,14 +131,14 @@ export const PORTFOLIO_DATA: PortfolioData = {
         { name: 'Microservices', level: 82 },
       ],
     },
-    {
-      category: 'Mobile',
-      items: [
-        { name: 'Responsive UI', level: 94 },
-        { name: 'PWA Patterns', level: 78 },
-        { name: 'Touch UX', level: 82 },
-      ],
-    },
+    // {
+    //   category: 'Mobile',
+    //   items: [
+    //     { name: 'Responsive UI', level: 94 },
+    //     { name: 'PWA Patterns', level: 78 },
+    //     { name: 'Touch UX', level: 82 },
+    //   ],
+    // },
     {
       category: 'Database',
       items: [
@@ -151,14 +148,14 @@ export const PORTFOLIO_DATA: PortfolioData = {
         { name: 'SQL Optimization', level: 84 },
       ],
     },
-    {
-      category: 'Cloud',
-      items: [
-        { name: 'AWS Basics', level: 72 },
-        { name: 'Vercel', level: 85 },
-        { name: 'Firebase', level: 74 },
-      ],
-    },
+    // {
+    //   category: 'Cloud',
+    //   items: [
+    //     { name: 'AWS Basics', level: 72 },
+    //     { name: 'Vercel', level: 85 },
+    //     { name: 'Firebase', level: 74 },
+    //   ],
+    // },
     {
       category: 'DevOps',
       items: [

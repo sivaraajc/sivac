@@ -7,7 +7,7 @@ import { LenisService } from '../../services/lenis.service';
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <aside class="pointer-events-none fixed left-4 top-1/2 z-[62] hidden -translate-y-1/2 xl:block" aria-hidden="true">
+    <!-- <aside class="pointer-events-none fixed left-4 top-1/2 z-[62] hidden -translate-y-1/2 xl:block" aria-hidden="true">
       <div class="pointer-events-auto flex flex-col gap-3 rounded-2xl border border-border/70 glass-strong p-3">
         @for (chapter of chapters; track chapter.id) {
           <button
@@ -32,7 +32,7 @@ import { LenisService } from '../../services/lenis.service';
           </button>
         }
       </div>
-    </aside>
+    </aside> -->
   `,
 })
 export class StoryRail {

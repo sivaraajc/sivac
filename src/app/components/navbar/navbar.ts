@@ -35,7 +35,7 @@ import { fadeIn } from '../../animations/portfolio.animations';
           class="font-display text-lg font-semibold tracking-tight md:text-xl"
           (click)="go($event, '#home')"
         >
-          <span class="text-gradient">{{ portfolio.portfolio().name }}</span><span class="text-accent">.</span>
+          <span class="text-gradient">{{ portfolio.portfolio().name }}</span>
         </a>
 
         <nav class="hidden items-center gap-1 lg:flex" aria-label="Primary">
