@@ -16,7 +16,7 @@ import { CountUpDirective } from '../../directives/count-up.directive';
         <app-section-heading
           eyebrow="Introduction"
           title="About Me"
-          subtitle="Senior Software Engineer crafting scalable Angular systems with premium craft."
+          subtitle="Senior Software Engineer"
         />
 
         <div class="grid items-start gap-10 lg:grid-cols-[0.9fr_1.1fr]">

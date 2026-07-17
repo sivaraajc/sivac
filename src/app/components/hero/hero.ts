@@ -6,7 +6,6 @@ import {
   OnDestroy,
   inject,
   signal,
-  viewChild,
 } from '@angular/core';
 import { PortfolioService } from '../../services/portfolio.service';
 import { AnimationService } from '../../services/animation.service';
@@ -129,17 +128,24 @@ export class Hero implements AfterViewInit, OnDestroy {
     this.lenis.scrollTo(href);
   }
 
+  /** ~4s to type / delete a full role phrase */
+  private stepDelay(text: string): number {
+    return Math.max(10, Math.floor(1000 / Math.max(text.length, 1)));
+  }
+
   private typeLoop(): void {
     const roles = this.p().roles;
     const current = roles[this.roleIndex] ?? '';
+    const delay = this.stepDelay(current);
 
     if (!this.deleting && this.charIndex <= current.length) {
       this.typed.set(current.slice(0, this.charIndex));
       this.charIndex++;
-      this.timer = setTimeout(() => this.typeLoop(), 70);
       if (this.charIndex > current.length) {
         this.deleting = true;
-        this.timer = setTimeout(() => this.typeLoop(), 1400);
+        this.timer = setTimeout(() => this.typeLoop(), 1000);
+      } else {
+        this.timer = setTimeout(() => this.typeLoop(), delay);
       }
       return;
     }
@@ -147,12 +153,13 @@ export class Hero implements AfterViewInit, OnDestroy {
     if (this.deleting && this.charIndex >= 0) {
       this.typed.set(current.slice(0, this.charIndex));
       this.charIndex--;
-      this.timer = setTimeout(() => this.typeLoop(), 36);
       if (this.charIndex < 0) {
         this.deleting = false;
         this.roleIndex = (this.roleIndex + 1) % roles.length;
         this.charIndex = 0;
-        this.timer = setTimeout(() => this.typeLoop(), 300);
+        this.timer = setTimeout(() => this.typeLoop(), 400);
+      } else {
+        this.timer = setTimeout(() => this.typeLoop(), delay);
       }
     }
   }

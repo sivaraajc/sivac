@@ -17,7 +17,7 @@ export const PORTFOLIO_DATA: PortfolioData = {
   heroAvatarImage: `${ASSETS_BASE}/images/siva-avatar.png`,
   avatarImage: `${ASSETS_BASE}/images/siva-avatar.png`,
   tagline:
-    'I craft premium Angular experiences and scalable full-stack systems with cinematic polish and measurable impact.',
+    'I build scalable and efficient software solutions to solve real-world problems.',
   roles: ['Angular Expert', 'Full Stack Engineer', 'UI Architect', 'Team Mentor'],
 
   nav: [
