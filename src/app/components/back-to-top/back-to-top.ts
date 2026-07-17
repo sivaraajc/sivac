@@ -11,7 +11,7 @@ import { LucideArrowUp } from '@lucide/angular';
     @if (visible()) {
       <button
         type="button"
-        class="fixed bottom-6 right-6 z-[65] inline-flex h-12 w-12 items-center justify-center rounded-full border border-border glass-strong text-accent shadow-glow transition hover:scale-105"
+        class="fixed bottom-24 right-6 z-[65] inline-flex h-12 w-12 items-center justify-center rounded-full border border-border glass-strong text-accent shadow-glow transition hover:scale-105"
         aria-label="Back to top"
         (click)="top()"
       >
