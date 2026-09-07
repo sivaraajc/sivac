@@ -8,7 +8,7 @@ export const PORTFOLIO_DATA: PortfolioData = {
   fullName: 'Sivaraaj C',
   title: 'Senior Software Engineer',
   location: 'Chennai, Tamil Nadu, India',
-  email: 'sivaraaj6997@gmail.com',
+  email: 'csivaraaj@gmail.com',
   phone: '+91 84890 17762',
   linkedin: 'https://linkedin.com/in/sivaraaj-c',
   github: 'https://github.com/sivaraajc',
