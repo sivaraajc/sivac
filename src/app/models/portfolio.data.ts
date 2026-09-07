@@ -13,7 +13,7 @@ export const PORTFOLIO_DATA: PortfolioData = {
   linkedin: 'https://linkedin.com/in/sivaraaj-c',
   github: 'https://github.com/sivaraajc',
   portfolio: 'https://sivaraajc.github.io/SIVARAAJ/#/',
-  cvPath: `${ASSETS_BASE}/cv/SIVA_CV.pdf`,
+  cvPath: `${ASSETS_BASE}/cv/SIVARAAJ_RESUME.pdf`,
   heroAvatarImage: `${ASSETS_BASE}/images/siva-avatar.png`,
   avatarImage: `${ASSETS_BASE}/images/siva-avatar.png`,
   tagline:
