@@ -67,7 +67,7 @@ import { SocialIcon } from '../../shared/social-icon/social-icon';
     }
     .social:hover {
       border-color: rgba(168, 85, 247, 0.5);
-      color: #a855f7;
+      color: var(--day-accent-3);
       transform: translateY(-2px);
       box-shadow: 0 0 20px rgba(124, 58, 237, 0.3);
     }

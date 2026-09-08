@@ -50,12 +50,12 @@ import { isPlatformBrowser } from '@angular/common';
       height: 8px;
       margin: -4px 0 0 -4px;
       border-radius: 999px;
-      background: #22d3ee;
-      box-shadow: 0 0 18px rgba(34, 211, 238, 0.8);
+      background: var(--day-accent);
+      box-shadow: 0 0 18px color-mix(in srgb, var(--day-accent) 80%, transparent);
       transition: transform 0.12s ease, background 0.2s ease;
     }
     .cursor-hover {
-      background: #a78bfa;
+      background: var(--day-accent-3);
     }
     .cursor-ring {
       width: 36px;
@@ -68,9 +68,9 @@ import { isPlatformBrowser } from '@angular/common';
     .cursor-label {
       padding: 0.25rem 0.5rem;
       border-radius: 999px;
-      border: 1px solid rgba(34, 211, 238, 0.35);
+      border: 1px solid color-mix(in srgb, var(--day-accent) 35%, transparent);
       background: rgba(7, 9, 15, 0.85);
-      color: #67e8f9;
+      color: var(--day-accent);
       font-family: var(--font-mono);
       font-size: 10px;
       letter-spacing: 0.08em;

@@ -134,7 +134,7 @@ import {
       height: 1.05em;
       margin-left: 3px;
       vertical-align: -0.12em;
-      background: linear-gradient(#06b6d4, #a855f7);
+      background: linear-gradient(var(--day-accent), var(--day-accent-3));
       animation: blink 1s step-end infinite;
     }
     .avatar-frame {
@@ -159,14 +159,14 @@ import {
       inset: -14px;
       border-radius: 50%;
       border: 1px solid transparent;
-      border-top-color: #7c3aed;
-      border-right-color: #06b6d4;
+      border-top-color: var(--day-accent-2);
+      border-right-color: var(--day-accent);
       animation: spin 8s linear infinite;
     }
     .avatar-ring-2 {
       inset: -28px;
-      border-top-color: #ff4d8d;
-      border-right-color: #a855f7;
+      border-top-color: var(--day-neon);
+      border-right-color: var(--day-accent-3);
       animation-duration: 12s;
       animation-direction: reverse;
       opacity: 0.7;
@@ -195,8 +195,8 @@ import {
       width: 7px;
       height: 7px;
       border-radius: 50%;
-      background: #06b6d4;
-      box-shadow: 0 0 12px #06b6d4;
+      background: var(--day-accent);
+      box-shadow: 0 0 12px var(--day-accent);
       animation: pulse 1.8s ease-in-out infinite;
     }
     .orbit-item {
@@ -210,7 +210,7 @@ import {
       padding: 0.35rem 0.7rem;
       font-family: var(--font-mono);
       font-size: 10px;
-      color: #06b6d4;
+      color: var(--day-accent);
       box-shadow: 0 0 24px rgba(124, 58, 237, 0.2);
       animation: orbit linear infinite;
       white-space: nowrap;
@@ -229,7 +229,7 @@ import {
       width: 3px;
       height: 7px;
       border-radius: 999px;
-      background: #a855f7;
+      background: var(--day-accent-3);
       animation: wheel 1.6s ease-in-out infinite;
     }
     @keyframes blink { 50% { opacity: 0; } }

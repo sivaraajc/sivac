@@ -37,18 +37,18 @@ import { Component, ChangeDetectionStrategy } from '@angular/core';
     .a1 {
       top: -12%;
       left: -8%;
-      background: radial-gradient(circle, rgba(124, 58, 237, 0.55), transparent 70%);
+      background: radial-gradient(circle, color-mix(in srgb, var(--day-accent-2) 55%, transparent), transparent 70%);
     }
     .a2 {
       top: 10%;
       right: -18%;
-      background: radial-gradient(circle, rgba(6, 182, 212, 0.42), transparent 70%);
+      background: radial-gradient(circle, color-mix(in srgb, var(--day-accent) 42%, transparent), transparent 70%);
       animation-delay: -7s;
     }
     .a3 {
       bottom: -22%;
       left: 20%;
-      background: radial-gradient(circle, rgba(255, 77, 141, 0.28), transparent 70%);
+      background: radial-gradient(circle, color-mix(in srgb, var(--day-neon) 28%, transparent), transparent 70%);
       animation-delay: -12s;
     }
     .a4 {
@@ -56,7 +56,7 @@ import { Component, ChangeDetectionStrategy } from '@angular/core';
       left: 40%;
       width: 40vw;
       height: 40vw;
-      background: radial-gradient(circle, rgba(168, 85, 247, 0.3), transparent 70%);
+      background: radial-gradient(circle, color-mix(in srgb, var(--day-accent-3) 30%, transparent), transparent 70%);
       animation-delay: -4s;
     }
     .blob {
@@ -71,14 +71,14 @@ import { Component, ChangeDetectionStrategy } from '@angular/core';
       height: 280px;
       top: 38%;
       left: 8%;
-      background: #7c3aed;
+      background: var(--day-accent-2);
     }
     .b2 {
       width: 220px;
       height: 220px;
       top: 58%;
       right: 10%;
-      background: #06b6d4;
+      background: var(--day-accent);
       animation-delay: -5s;
     }
     .b3 {
@@ -86,15 +86,15 @@ import { Component, ChangeDetectionStrategy } from '@angular/core';
       height: 180px;
       top: 18%;
       left: 55%;
-      background: #ff4d8d;
+      background: var(--day-neon);
       animation-delay: -9s;
     }
     .perspective-grid {
       position: absolute;
       inset: 55% -10% -20%;
       background-image:
-        linear-gradient(rgba(124, 58, 237, 0.12) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(6, 182, 212, 0.1) 1px, transparent 1px);
+        linear-gradient(color-mix(in srgb, var(--day-accent-2) 12%, transparent) 1px, transparent 1px),
+        linear-gradient(90deg, color-mix(in srgb, var(--day-accent) 10%, transparent) 1px, transparent 1px);
       background-size: 60px 60px;
       transform: perspective(500px) rotateX(58deg);
       mask-image: linear-gradient(to top, black, transparent 85%);
@@ -105,7 +105,7 @@ import { Component, ChangeDetectionStrategy } from '@angular/core';
       position: absolute;
       width: 2px;
       height: 55vh;
-      background: linear-gradient(to bottom, transparent, rgba(168, 85, 247, 0.35), transparent);
+      background: linear-gradient(to bottom, transparent, color-mix(in srgb, var(--day-accent-3) 35%, transparent), transparent);
       filter: blur(1px);
       opacity: 0.4;
       animation: raySweep 14s ease-in-out infinite;

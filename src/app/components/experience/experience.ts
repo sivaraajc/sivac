@@ -56,7 +56,7 @@ import { RevealDirective } from '../../directives/reveal.directive';
       top: 0;
       bottom: 0;
       width: 2px;
-      background: linear-gradient(180deg, #7c3aed, #06b6d4, #ff4d8d);
+      background: linear-gradient(180deg, var(--day-accent-2), var(--day-accent), var(--day-neon));
       box-shadow: 0 0 18px rgba(124, 58, 237, 0.55);
       border-radius: 999px;
     }
@@ -67,7 +67,7 @@ import { RevealDirective } from '../../directives/reveal.directive';
       width: 14px;
       height: 14px;
       border-radius: 50%;
-      border: 2px solid #a855f7;
+      border: 2px solid var(--day-accent-3);
       background: #050816;
       box-shadow: 0 0 0 4px rgba(124, 58, 237, 0.2), 0 0 24px rgba(6, 182, 212, 0.55);
       animation: floatDot 3s ease-in-out infinite;

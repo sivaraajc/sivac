@@ -1,5 +1,6 @@
 import {
   ApplicationConfig,
+  APP_INITIALIZER,
   provideBrowserGlobalErrorListeners,
   provideZonelessChangeDetection,
 } from '@angular/core';
@@ -7,6 +8,7 @@ import { provideRouter, withInMemoryScrolling, withViewTransitions } from '@angu
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { provideLucideConfig } from '@lucide/angular';
 import { routes } from './app.routes';
+import { DayThemeService } from './services/day-theme.service';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -19,5 +21,11 @@ export const appConfig: ApplicationConfig = {
     ),
     provideAnimationsAsync(),
     provideLucideConfig({ strokeWidth: 1.75 }),
+    {
+      provide: APP_INITIALIZER,
+      multi: true,
+      useFactory: (dayTheme: DayThemeService) => () => dayTheme.apply(),
+      deps: [DayThemeService],
+    },
   ],
 };

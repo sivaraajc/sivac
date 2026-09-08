@@ -72,8 +72,8 @@ import { ExperienceModeService } from '../../services/experience-mode.service';
       position: absolute;
       inset: 18px;
       border-radius: 50%;
-      border-top: 2px solid #7c3aed;
-      border-right: 2px solid #06b6d4;
+      border-top: 2px solid var(--day-accent-2);
+      border-right: 2px solid var(--day-accent);
       animation: spinRing 1.1s linear infinite reverse;
     }
     @keyframes spinRing { to { transform: rotate(360deg); } }

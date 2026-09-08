@@ -63,9 +63,9 @@ import { TiltDirective } from '../../directives/tilt.directive';
                     />
                     <defs>
                       <linearGradient [attr.id]="'skillGrad' + i" x1="0%" y1="0%" x2="100%" y2="100%">
-                        <stop offset="0%" stop-color="#7c3aed" />
-                        <stop offset="50%" stop-color="#06b6d4" />
-                        <stop offset="100%" stop-color="#ff4d8d" />
+                        <stop offset="0%" stop-color="var(--day-accent-2)" />
+                        <stop offset="50%" stop-color="var(--day-accent)" />
+                        <stop offset="100%" stop-color="var(--day-neon)" />
                       </linearGradient>
                     </defs>
                   </svg>
@@ -113,7 +113,7 @@ import { TiltDirective } from '../../directives/tilt.directive';
       place-items: center;
       font-family: var(--font-mono);
       font-size: 12px;
-      color: #06b6d4;
+      color: var(--day-accent);
     }
     .ring-progress {
       transition: stroke-dashoffset 1.2s cubic-bezier(0.22, 1, 0.36, 1);
