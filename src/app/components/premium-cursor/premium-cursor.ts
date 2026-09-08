@@ -15,7 +15,7 @@ import { isPlatformBrowser } from '@angular/common';
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     @if (enabled()) {
-      <div class="pointer-events-none fixed inset-0 z-[95] hidden md:block" aria-hidden="true">
+      <div class="pointer-events-none fixed inset-0 z-[110] hidden md:block" aria-hidden="true">
         <div
           class="cursor-dot"
           [style.transform]="'translate3d(' + x() + 'px,' + y() + 'px,0) scale(' + scale() + ')'"

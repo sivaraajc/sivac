@@ -15,6 +15,7 @@ import { PremiumCursor } from '../../components/premium-cursor/premium-cursor';
 import { AiOrb } from '../../components/ai-orb/ai-orb';
 import { ReactiveStage } from '../../components/reactive-stage/reactive-stage';
 import { EasterEggsDirective } from '../../directives/easter-eggs.directive';
+import { ProjectModal } from '../../components/project-modal/project-modal';
 
 @Component({
   selector: 'app-main-layout',
@@ -36,6 +37,7 @@ import { EasterEggsDirective } from '../../directives/easter-eggs.directive';
     PremiumCursor,
     AiOrb,
     ReactiveStage,
+    ProjectModal,
   ],
   hostDirectives: [EasterEggsDirective],
   template: `
@@ -50,6 +52,7 @@ import { EasterEggsDirective } from '../../directives/easter-eggs.directive';
     <app-scroll-progress />
     <app-story-rail />
     <app-navbar />
+    <app-project-modal />
     <app-command-palette />
     <app-ai-orb />
     <main class="relative z-10">

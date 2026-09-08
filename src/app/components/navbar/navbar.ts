@@ -19,6 +19,7 @@ import { fadeIn } from '../../animations/portfolio.animations';
   imports: [MagneticDirective, LucideMenu, LucideX, LucideDownload],
   animations: [fadeIn],
   template: `
+    @if (!portfolio.activeProject()) {
     <header
       class="fixed inset-x-0 top-0 z-[65] transition-all duration-500"
       [class.py-4]="!scrolled()"
@@ -112,6 +113,7 @@ import { fadeIn } from '../../animations/portfolio.animations';
         </div>
       }
     </header>
+    }
   `,
 })
 export class Navbar {
