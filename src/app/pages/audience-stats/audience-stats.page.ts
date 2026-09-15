@@ -25,7 +25,10 @@ import { environment } from '../../../environments/environment';
             <div>
               <p class="font-mono text-[10px] uppercase tracking-[0.2em] text-accent">Owner only</p>
               <h1 class="font-display text-3xl font-semibold">Portfolio audience</h1>
-              <p class="mt-2 text-sm text-text-muted">Not shown on the public site — background tracking only.</p>
+              <p class="mt-2 text-sm text-text-muted">
+                Background only. Names/emails appear when someone uses the contact form; other visits show
+                approximate city &amp; device (from IP), not their exact home address.
+              </p>
             </div>
             <a
               class="magnetic-btn btn-ghost text-sm"
@@ -65,10 +68,15 @@ import { environment } from '../../../environments/environment';
             </ul>
           </div>
 
-          @if (!environment.audience.webhookUrl) {
+          @if (environment.audience.webhookUrl.includes('formsubmit.co')) {
             <p class="mt-6 text-xs leading-relaxed text-text-dim">
-              Tip: set <code>webhookUrl</code> in <code>src/environments/environment.ts</code> to store all visitors
-              globally and receive email alerts on each view.
+              Email alerts are on via FormSubmit (confirm their activation email once). For a shared visitor log on this
+              page from every device, deploy <code>scripts/portfolio-audience-webhook.gs</code> and replace
+              <code>webhookUrl</code> with your Google Apps Script URL.
+            </p>
+          } @else if (!environment.audience.webhookUrl) {
+            <p class="mt-6 text-xs leading-relaxed text-text-dim">
+              Set <code>webhookUrl</code> in <code>environment.ts</code> for email alerts or cloud visitor storage.
             </p>
           }
 
@@ -101,12 +109,11 @@ export class AudienceStatsPage implements OnInit {
           at: new Date(e.at).toLocaleString(),
           label:
             e.type === 'page_view'
-              ? 'Anonymous page view'
+              ? e.city || e.country
+                ? `Visitor — ${[e.city, e.country].filter(Boolean).join(', ')}`
+                : 'Anonymous visitor'
               : e.name ?? e.email ?? 'Identified visitor',
-          detail:
-            e.type === 'page_view'
-              ? `Referrer: ${e.referrer ?? 'direct'}`
-              : [e.email, e.company, e.type].filter(Boolean).join(' · '),
+          detail: this.audience.formatEventDetail(e),
         })),
       );
     });
