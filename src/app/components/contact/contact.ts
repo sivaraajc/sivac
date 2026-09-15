@@ -6,6 +6,7 @@ import {
 } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { PortfolioService } from '../../services/portfolio.service';
+import { PortfolioAudienceService } from '../../services/portfolio-audience.service';
 import { SectionHeading } from '../../shared/section-heading/section-heading';
 import { RevealDirective } from '../../directives/reveal.directive';
 import { MagneticDirective } from '../../directives/magnetic.directive';
@@ -257,6 +258,7 @@ import { SocialIcon } from '../../shared/social-icon/social-icon';
 })
 export class Contact {
   private readonly portfolio = inject(PortfolioService);
+  private readonly audience = inject(PortfolioAudienceService);
   private readonly fb = inject(FormBuilder);
 
   readonly p = () => this.portfolio.portfolio();
@@ -293,6 +295,7 @@ export class Contact {
     }
     this.sending.set(true);
     const { name, email, message } = this.form.getRawValue();
+    this.audience.logContactLead(name, email);
     const subject = encodeURIComponent(`Portfolio inquiry from ${name}`);
     const body = encodeURIComponent(`${message}\n\n— ${name} (${email})`);
     this.success.set(true);

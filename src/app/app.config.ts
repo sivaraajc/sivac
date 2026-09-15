@@ -9,6 +9,7 @@ import { provideAnimationsAsync } from '@angular/platform-browser/animations/asy
 import { provideLucideConfig } from '@lucide/angular';
 import { routes } from './app.routes';
 import { DayThemeService } from './services/day-theme.service';
+import { PortfolioAudienceService } from './services/portfolio-audience.service';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -26,6 +27,12 @@ export const appConfig: ApplicationConfig = {
       multi: true,
       useFactory: (dayTheme: DayThemeService) => () => dayTheme.apply(),
       deps: [DayThemeService],
+    },
+    {
+      provide: APP_INITIALIZER,
+      multi: true,
+      useFactory: (audience: PortfolioAudienceService) => () => audience.init(),
+      deps: [PortfolioAudienceService],
     },
   ],
 };
