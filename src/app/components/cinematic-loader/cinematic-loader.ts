@@ -2,12 +2,20 @@ import {
   ChangeDetectionStrategy,
   Component,
   OnInit,
+  OnDestroy,
   inject,
   signal,
   PLATFORM_ID,
 } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
+import { NavigationEnd, Router } from '@angular/router';
+import { filter, take } from 'rxjs/operators';
+import { Subscription } from 'rxjs';
 import { ExperienceModeService } from '../../services/experience-mode.service';
+
+const LOADER_SEEN_KEY = 'port-loader-seen';
+const MIN_VISIBLE_MS = 350;
+const MAX_VISIBLE_MS = 1400;
 
 @Component({
   selector: 'app-cinematic-loader',
@@ -24,7 +32,10 @@ import { ExperienceModeService } from '../../services/experience-mode.service';
           </p>
           <p class="mt-4 font-mono text-xs uppercase tracking-[0.35em] text-text-dim">{{ status() }}</p>
           <div class="mt-8 h-[2px] w-56 overflow-hidden rounded-full bg-white/10">
-            <div class="h-full bg-gradient-to-r from-accent-2 via-accent to-neon transition-[width] duration-150" [style.width.%]="progress()"></div>
+            <div
+              class="h-full bg-gradient-to-r from-accent-2 via-accent to-neon transition-[width] duration-150"
+              [style.width.%]="progress()"
+            ></div>
           </div>
           <p class="mt-3 font-mono text-[10px] text-accent-3">{{ progress() }}%</p>
         </div>
@@ -39,7 +50,7 @@ import { ExperienceModeService } from '../../services/experience-mode.service';
       display: grid;
       place-items: center;
       background: #050816;
-      transition: opacity 0.7s ease, visibility 0.7s ease;
+      transition: opacity 0.45s ease, visibility 0.45s ease;
     }
     .loader-exit {
       opacity: 0;
@@ -83,52 +94,98 @@ import { ExperienceModeService } from '../../services/experience-mode.service';
     }
   `,
 })
-export class CinematicLoader implements OnInit {
+export class CinematicLoader implements OnInit, OnDestroy {
   private readonly platformId = inject(PLATFORM_ID);
   private readonly mode = inject(ExperienceModeService);
+  private readonly router = inject(Router);
+
   readonly visible = signal(true);
   readonly exiting = signal(false);
   readonly progress = signal(0);
-  readonly status = signal('boot sequence');
+  readonly status = signal('loading');
   readonly name = 'Sivaraaj C';
 
-  private readonly stages = [
-    { at: 12, text: 'mounting workspace' },
-    { at: 28, text: 'compiling signals' },
-    { at: 46, text: 'hydrating ui systems' },
-    { at: 67, text: 'warming webgl' },
-    { at: 84, text: 'syncing motion engine' },
-    { at: 100, text: 'ready' },
-  ];
+  private startedAt = 0;
+  private routeReady = false;
+  private windowReady = false;
+  private finished = false;
+  private rafId = 0;
+  private navSub?: Subscription;
 
   ngOnInit(): void {
     if (!isPlatformBrowser(this.platformId)) {
       this.finish();
       return;
     }
+
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
       this.finish();
       return;
     }
 
-    let value = 0;
-    const tick = () => {
-      value = Math.min(100, value + (value < 70 ? 2.2 : 1.1));
-      this.progress.set(Math.floor(value));
-      const stage = [...this.stages].reverse().find((s) => value >= s.at);
-      if (stage) this.status.set(stage.text);
-      if (value >= 100) {
-        setTimeout(() => this.finish(), 350);
+    try {
+      if (sessionStorage.getItem(LOADER_SEEN_KEY) === '1') {
+        this.finish();
         return;
       }
-      requestAnimationFrame(tick);
-    };
-    requestAnimationFrame(tick);
+    } catch {
+      /* private mode */
+    }
+
+    this.startedAt = performance.now();
+
+    if (document.readyState === 'complete') {
+      this.windowReady = true;
+    } else {
+      window.addEventListener('load', () => (this.windowReady = true), { once: true });
+    }
+
+    this.navSub = this.router.events
+      .pipe(filter((e) => e instanceof NavigationEnd), take(1))
+      .subscribe(() => (this.routeReady = true));
+
+    this.tick();
   }
 
+  ngOnDestroy(): void {
+    this.navSub?.unsubscribe();
+    cancelAnimationFrame(this.rafId);
+  }
+
+  private tick = (): void => {
+    const elapsed = performance.now() - this.startedAt;
+    const ready = this.routeReady && this.windowReady;
+    const canDismiss = elapsed >= MIN_VISIBLE_MS && (ready || elapsed >= MAX_VISIBLE_MS);
+
+    const target = ready
+      ? 100
+      : Math.min(92, Math.floor((elapsed / MAX_VISIBLE_MS) * 92));
+    this.progress.set(target);
+    this.status.set(ready ? 'ready' : elapsed > 600 ? 'preparing experience' : 'loading');
+
+    if (canDismiss) {
+      this.progress.set(100);
+      this.status.set('ready');
+      setTimeout(() => this.finish(), 120);
+      return;
+    }
+
+    this.rafId = requestAnimationFrame(this.tick);
+  };
+
   private finish(): void {
+    if (this.finished) return;
+    this.finished = true;
+    cancelAnimationFrame(this.rafId);
+
+    try {
+      sessionStorage.setItem(LOADER_SEEN_KEY, '1');
+    } catch {
+      /* ignore */
+    }
+
     this.exiting.set(true);
     this.mode.setLoaderDone();
-    setTimeout(() => this.visible.set(false), 750);
+    setTimeout(() => this.visible.set(false), 480);
   }
 }
