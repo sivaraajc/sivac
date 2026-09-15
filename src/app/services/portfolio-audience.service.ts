@@ -111,6 +111,26 @@ export class PortfolioAudienceService {
     return Array.from(map.values()).sort((a, b) => b.at.localeCompare(a.at));
   }
 
+  getEventCount(): number {
+    return this.getAllEvents().length;
+  }
+
+  getEventsPage(offset: number, limit: number): AudienceEvent[] {
+    const safeOffset = Math.max(0, offset);
+    const safeLimit = Math.min(400, Math.max(1, limit));
+    return this.getAllEvents().slice(safeOffset, safeOffset + safeLimit);
+  }
+
+  formatEventLabel(e: AudienceEvent): string {
+    if (e.type === 'page_view') {
+      if (e.city || e.country) {
+        return `Visitor — ${[e.city, e.country].filter(Boolean).join(', ')}`;
+      }
+      return 'Anonymous visitor';
+    }
+    return e.name ?? e.email ?? 'Identified visitor';
+  }
+
   getIdentifiedMemberCount(): number {
     const names = new Set<string>();
     for (const e of this.getAllEvents()) {
@@ -125,7 +145,7 @@ export class PortfolioAudienceService {
     const views = this.totalViews() ?? '—';
     const members = this.getIdentifiedMemberCount();
     const lines = this.getAllEvents()
-      .slice(0, 50)
+      .slice(0, 100)
       .map((e) => {
         if (e.type === 'page_view') {
           return `• Page view — ${e.at} — ${this.formatEventDetail(e)}`;
@@ -153,7 +173,7 @@ export class PortfolioAudienceService {
   }
 
   private appendLocal(event: AudienceEvent): void {
-    const next = [event, ...this.readLocal()].slice(0, 200);
+    const next = [event, ...this.readLocal()].slice(0, 500);
     localStorage.setItem(EVENTS_KEY, JSON.stringify(next));
   }
 
