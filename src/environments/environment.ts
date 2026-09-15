@@ -9,8 +9,8 @@ export const environment = {
      * Free email alerts (FormSubmit). First visit may require confirming the link FormSubmit sends you.
      * For cloud log + private-page sync: deploy scripts/portfolio-audience-webhook.gs and paste that URL here.
      */
-    webhookUrl: 'https://formsubmit.co/ajax/csivaraaj@gmail.com',
+    webhookUrl: 'https://formsubmit.co/ajax/sivaraaj2001@gmail.com',
     /** Email for webhook notifications & mailto reports */
-    notifyEmail: 'csivaraaj@gmail.com',
+    notifyEmail: 'sivaraaj2001@gmail.com',
   },
 };
