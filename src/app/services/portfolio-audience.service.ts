@@ -21,14 +21,29 @@ export interface AudienceEvent {
   locale?: string;
   device?: string;
   isp?: string;
+  ip?: string;
+  browser?: string;
+  /** Anonymous browser id (localStorage) — not a real name */
+  visitorKey?: string;
+  sessionId?: string;
+  referrerHost?: string;
+  trafficSource?: string;
+  utmSource?: string;
+  utmMedium?: string;
+  utmCampaign?: string;
+  screen?: string;
+  networkType?: string;
 }
 
 const EVENTS_KEY = 'portfolio_audience_events';
 const SESSION_VIEW_KEY = 'portfolio_view_logged';
+const VISITOR_KEY_STORAGE = 'portfolio_visitor_key';
+const SESSION_ID_STORAGE = 'portfolio_session_id';
 const VIEW_COUNTER_API = 'https://countapi.mileshilliard.com/api/v1';
 
 interface GeoJsResponse {
   success?: boolean;
+  ip?: string;
   city?: string;
   region?: string;
   country?: string;
@@ -38,12 +53,18 @@ interface GeoJsResponse {
 
 interface IpWhoResponse {
   success?: boolean;
+  ip?: string;
   city?: string;
   region?: string;
   country?: string;
   timezone?: string | { id?: string };
   connection?: { isp?: string };
 }
+
+type GeoFields = Pick<
+  AudienceEvent,
+  'city' | 'region' | 'country' | 'timezone' | 'isp' | 'ip'
+>;
 
 @Injectable({ providedIn: 'root' })
 export class PortfolioAudienceService {
@@ -74,12 +95,23 @@ export class PortfolioAudienceService {
   formatEventDetail(e: AudienceEvent): string {
     if (e.type !== 'page_view') {
       const loc = this.formatEventLocation(e);
-      return [e.email, e.company, loc !== 'Location unknown' ? loc : null, e.type]
+      return [
+        e.email,
+        `IP: ${this.formatVisitorIp(e)}`,
+        `Browser: ${this.formatVisitorBrowser(e)}`,
+        loc !== 'Location unknown' ? loc : null,
+        e.type,
+      ]
         .filter(Boolean)
         .join(' · ');
     }
     const ref = e.referrer && e.referrer !== 'direct' ? `Referrer: ${e.referrer}` : 'Referrer: direct';
-    return `${ref} · ${this.formatEventLocation(e)}`;
+    return [
+      ref,
+      `IP: ${this.formatVisitorIp(e)}`,
+      `Browser: ${this.formatVisitorBrowser(e)}`,
+      this.formatEventLocation(e),
+    ].join(' · ');
   }
 
   usesRemoteEventStore(): boolean {
@@ -122,6 +154,10 @@ export class PortfolioAudienceService {
   }
 
   formatEventLabel(e: AudienceEvent): string {
+    if (e.type === 'identified_visitor') {
+      const who = e.name ?? 'Recruiter';
+      return e.company ? `${who} — ${e.company}` : who;
+    }
     if (e.type === 'page_view') {
       if (e.city || e.country) {
         return `Visitor — ${[e.city, e.country].filter(Boolean).join(', ')}`;
@@ -129,6 +165,40 @@ export class PortfolioAudienceService {
       return 'Anonymous visitor';
     }
     return e.name ?? e.email ?? 'Identified visitor';
+  }
+
+  formatVisitorName(e: AudienceEvent): string {
+    if (e.name) {
+      return e.company ? `${e.name} (${e.company})` : e.name;
+    }
+    if (e.email) return e.email;
+    if (e.visitorKey) return `Anonymous · visitor ${e.visitorKey}`;
+    return 'Anonymous';
+  }
+
+  formatVisitorNetwork(e: AudienceEvent): string {
+    return e.isp?.trim() || '—';
+  }
+
+  formatVisitorSource(e: AudienceEvent): string {
+    if (e.trafficSource) return e.trafficSource;
+    if (e.utmSource) return e.utmSource;
+    if (e.referrerHost) return e.referrerHost;
+    return 'direct';
+  }
+
+  formatVisitorLocation(e: AudienceEvent): string {
+    const place = [e.city, e.region, e.country].filter(Boolean).join(', ');
+    return place || 'Unknown';
+  }
+
+  formatVisitorBrowser(e: AudienceEvent): string {
+    const parts = [e.browser, e.device].filter(Boolean);
+    return parts.join(' · ') || 'Unknown';
+  }
+
+  formatVisitorIp(e: AudienceEvent): string {
+    return e.ip?.trim() || '—';
   }
 
   getIdentifiedMemberCount(): number {
@@ -203,15 +273,107 @@ export class PortfolioAudienceService {
     void this.postWebhook(event, true);
   }
 
-  private clientHints(): Pick<AudienceEvent, 'referrer' | 'path' | 'userAgent' | 'timezone' | 'locale' | 'device'> {
+  private clientHints(): Pick<
+    AudienceEvent,
+    | 'referrer'
+    | 'path'
+    | 'userAgent'
+    | 'timezone'
+    | 'locale'
+    | 'device'
+    | 'browser'
+    | 'visitorKey'
+    | 'sessionId'
+    | 'referrerHost'
+    | 'trafficSource'
+    | 'utmSource'
+    | 'utmMedium'
+    | 'utmCampaign'
+    | 'screen'
+    | 'networkType'
+  > {
+    const ua = navigator.userAgent;
+    const utm = this.readUtmParams();
+    const referrerHost = this.parseReferrerHost(document.referrer);
+    const trafficSource = utm.source ?? referrerHost ?? 'direct';
+
     return {
       referrer: document.referrer || 'direct',
       path: location.href,
-      userAgent: navigator.userAgent.slice(0, 180),
+      userAgent: ua.slice(0, 180),
       timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
       locale: navigator.language,
       device: this.inferDevice(),
+      browser: this.parseBrowserName(ua),
+      visitorKey: this.getOrCreateVisitorKey(),
+      sessionId: this.getOrCreateSessionId(),
+      referrerHost,
+      trafficSource,
+      utmSource: utm.source,
+      utmMedium: utm.medium,
+      utmCampaign: utm.campaign,
+      screen: `${window.screen.width}×${window.screen.height}`,
+      networkType: this.readNetworkType(),
     };
+  }
+
+  private readUtmParams(): { source?: string; medium?: string; campaign?: string } {
+    const params = new URLSearchParams(location.search);
+    const source = params.get('utm_source')?.trim();
+    const medium = params.get('utm_medium')?.trim();
+    const campaign = params.get('utm_campaign')?.trim();
+    return {
+      source: source || undefined,
+      medium: medium || undefined,
+      campaign: campaign || undefined,
+    };
+  }
+
+  private parseReferrerHost(referrer: string): string | undefined {
+    if (!referrer) return undefined;
+    try {
+      return new URL(referrer).hostname.replace(/^www\./, '');
+    } catch {
+      return undefined;
+    }
+  }
+
+  private getOrCreateVisitorKey(): string {
+    let key = localStorage.getItem(VISITOR_KEY_STORAGE);
+    if (!key) {
+      key =
+        typeof crypto !== 'undefined' && 'randomUUID' in crypto
+          ? crypto.randomUUID().replace(/-/g, '').slice(0, 10)
+          : Math.random().toString(36).slice(2, 12);
+      localStorage.setItem(VISITOR_KEY_STORAGE, key);
+    }
+    return key;
+  }
+
+  private getOrCreateSessionId(): string {
+    let id = sessionStorage.getItem(SESSION_ID_STORAGE);
+    if (!id) {
+      id =
+        typeof crypto !== 'undefined' && 'randomUUID' in crypto
+          ? crypto.randomUUID().slice(0, 8)
+          : Math.random().toString(36).slice(2, 10);
+      sessionStorage.setItem(SESSION_ID_STORAGE, id);
+    }
+    return id;
+  }
+
+  private readNetworkType(): string | undefined {
+    const conn = (navigator as Navigator & { connection?: { effectiveType?: string } }).connection;
+    return conn?.effectiveType;
+  }
+
+  private parseBrowserName(ua: string): string {
+    if (/Edg\//i.test(ua)) return 'Microsoft Edge';
+    if (/OPR\//i.test(ua) || /Opera/i.test(ua)) return 'Opera';
+    if (/Chrome\//i.test(ua)) return 'Google Chrome';
+    if (/Firefox\//i.test(ua)) return 'Firefox';
+    if (/Safari\//i.test(ua)) return 'Safari';
+    return 'Other';
   }
 
   private inferDevice(): string {
@@ -224,12 +386,11 @@ export class PortfolioAudienceService {
   }
 
   /** City/country from visitor IP (browser calls geo API — approximate, not exact address). */
-  private async fetchVisitorGeo(): Promise<
-    Pick<AudienceEvent, 'city' | 'region' | 'country' | 'timezone' | 'isp'>
-  > {
+  private async fetchVisitorGeo(): Promise<GeoFields> {
     const fromGeoJs = await this.tryGeoJson<GeoJsResponse>(
       'https://get.geojs.io/v1/ip/geo.json',
       (d) => ({
+        ip: d.ip,
         city: d.city,
         region: d.region,
         country: d.country,
@@ -240,6 +401,7 @@ export class PortfolioAudienceService {
     if (fromGeoJs) return fromGeoJs;
 
     const fromIpWho = await this.tryGeoJson<IpWhoResponse>('https://ipwho.is/', (d) => ({
+      ip: d.ip,
       city: d.city,
       region: d.region,
       country: d.country,
@@ -251,15 +413,15 @@ export class PortfolioAudienceService {
 
   private async tryGeoJson<T extends { success?: boolean }>(
     url: string,
-    map: (data: T) => Pick<AudienceEvent, 'city' | 'region' | 'country' | 'timezone' | 'isp'>,
-  ): Promise<Pick<AudienceEvent, 'city' | 'region' | 'country' | 'timezone' | 'isp'> | null> {
+    map: (data: T) => GeoFields,
+  ): Promise<GeoFields | null> {
     try {
       const res = await fetch(url, { signal: AbortSignal.timeout(6000) });
       if (!res.ok) return null;
       const data = (await res.json()) as T;
       if (data.success === false) return null;
       const mapped = map(data);
-      if (!mapped.city && !mapped.country) return null;
+      if (!mapped.ip && !mapped.city && !mapped.country) return null;
       return mapped;
     } catch {
       return null;
@@ -354,8 +516,12 @@ export class PortfolioAudienceService {
       `Type: ${event.type}`,
       `Time: ${event.at}`,
       `Location: ${this.formatEventLocation(event)}`,
+      `IP: ${this.formatVisitorIp(event)}`,
+      `Browser: ${this.formatVisitorBrowser(event)}`,
+      `Visitor ID: ${event.visitorKey ?? '—'}`,
+      `Network: ${this.formatVisitorNetwork(event)}`,
+      `Source: ${this.formatVisitorSource(event)}`,
       `Referrer: ${event.referrer ?? 'direct'}`,
-      `Device: ${event.device ?? '—'}`,
       event.name ? `Name: ${event.name}` : null,
       event.email ? `Email: ${event.email}` : null,
       event.path ? `URL: ${event.path}` : null,

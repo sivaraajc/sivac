@@ -51,6 +51,28 @@ const DEFAULT_LIMIT = 100;
         background: var(--day-accent, #4ecdc4);
         font-weight: 600;
       }
+      .visitor-meta {
+        display: grid;
+        gap: 0.35rem 1rem;
+        margin-top: 0.65rem;
+        font-size: 0.7rem;
+      }
+      @media (min-width: 480px) {
+        .visitor-meta {
+          grid-template-columns: auto 1fr;
+        }
+      }
+      .visitor-meta dt {
+        font-family: var(--font-mono, ui-monospace, monospace);
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+        color: #64748b;
+      }
+      .visitor-meta dd {
+        margin: 0;
+        color: #94a3b8;
+        word-break: break-word;
+      }
     `,
   ],
   template: `
@@ -71,8 +93,9 @@ const DEFAULT_LIMIT = 100;
               <p class="font-mono text-[10px] uppercase tracking-[0.2em] text-accent">Owner only</p>
               <h1 class="font-display text-3xl font-semibold">Portfolio audience</h1>
               <p class="mt-2 text-sm text-text-muted">
-                Background only. Names/emails appear when someone uses the contact form; other visits show
-                approximate city &amp; device (from IP), not their exact home address.
+                Silent background logging only (no public badge). Real names need the contact form; otherwise you
+                get IP, location, browser, network ISP, and an anonymous visitor ID to spot repeat
+                browsers — not their legal name.
               </p>
             </div>
             <a class="magnetic-btn btn-ghost text-sm" [href]="mailtoReport()"> Email this report </a>
@@ -126,7 +149,21 @@ const DEFAULT_LIMIT = 100;
                     <span class="font-medium text-text">{{ row.label }}</span>
                     <span class="font-mono text-[10px] text-text-dim">{{ row.at }}</span>
                   </div>
-                  <p class="mt-1 text-xs text-text-muted">{{ row.detail }}</p>
+                  <dl class="visitor-meta">
+                    <dt>Name</dt>
+                    <dd>{{ row.name }}</dd>
+                    <dt>Location</dt>
+                    <dd>{{ row.location }}</dd>
+                    <dt>IP</dt>
+                    <dd>{{ row.ip }}</dd>
+                    <dt>Browser</dt>
+                    <dd>{{ row.browser }}</dd>
+                    <dt>Network</dt>
+                    <dd>{{ row.network }}</dd>
+                    <dt>Source</dt>
+                    <dd>{{ row.source }}</dd>
+                  </dl>
+                  <p class="mt-2 text-[10px] text-text-dim">{{ row.detail }}</p>
                 </li>
               } @empty {
                 <li class="px-5 py-8 text-center text-sm text-text-muted">No events on this page.</li>
@@ -199,6 +236,12 @@ export class AudienceStatsPage implements OnInit {
       id: `${e.at}-${this.offset() + i}`,
       at: new Date(e.at).toLocaleString(),
       label: this.audience.formatEventLabel(e),
+      name: this.audience.formatVisitorName(e),
+      location: this.audience.formatVisitorLocation(e),
+      ip: this.audience.formatVisitorIp(e),
+      browser: this.audience.formatVisitorBrowser(e),
+      network: this.audience.formatVisitorNetwork(e),
+      source: this.audience.formatVisitorSource(e),
       detail: this.audience.formatEventDetail(e),
     }));
   });
